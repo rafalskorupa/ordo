@@ -31,8 +31,18 @@ defmodule OrdoWeb.ConnCase do
     end
   end
 
-  setup tags do
-    Ordo.DataCase.setup_sandbox(tags)
+  setup _tags do
+    {:ok, _} = Application.ensure_all_started(:ordo)
+
+    on_exit(fn ->
+      case Application.stop(:ordo) do
+        :ok -> :ok
+        {:error, {:not_started, :ordo}} -> :ok
+      end
+
+      Ordo.Storage.reset!()
+    end)
+
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 

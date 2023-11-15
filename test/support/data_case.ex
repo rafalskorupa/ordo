@@ -24,20 +24,23 @@ defmodule Ordo.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import Ordo.DataCase
+      import Commanded.Assertions.EventAssertions
     end
   end
 
-  setup tags do
-    Ordo.DataCase.setup_sandbox(tags)
-    :ok
-  end
+  setup _tags do
+    {:ok, _} = Application.ensure_all_started(:ordo)
 
-  @doc """
-  Sets up the sandbox based on the test tags.
-  """
-  def setup_sandbox(tags) do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(Ordo.Repo, shared: not tags[:async])
-    on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
+    on_exit(fn ->
+      case Application.stop(:ordo) do
+        :ok -> :ok
+        {:error, {:not_started, :ordo}} -> :ok
+      end
+
+      Ordo.Storage.reset!()
+    end)
+
+    :ok
   end
 
   @doc """

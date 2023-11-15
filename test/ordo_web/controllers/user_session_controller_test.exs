@@ -1,5 +1,5 @@
 defmodule OrdoWeb.UserSessionControllerTest do
-  use OrdoWeb.ConnCase, async: true
+  use OrdoWeb.ConnCase, async: false
 
   import Ordo.UsersFixtures
 

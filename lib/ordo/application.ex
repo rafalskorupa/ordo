@@ -17,7 +17,8 @@ defmodule Ordo.Application do
       # Start a worker by calling: Ordo.Worker.start_link(arg)
       # {Ordo.Worker, arg},
       # Start to serve requests, typically the last entry
-      OrdoWeb.Endpoint
+      OrdoWeb.Endpoint,
+      Ordo.App
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -1,5 +1,5 @@
 defmodule OrdoWeb.UserAuthTest do
-  use OrdoWeb.ConnCase, async: true
+  use OrdoWeb.ConnCase, async: false
 
   alias Phoenix.LiveView
   alias Ordo.Users

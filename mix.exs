@@ -32,6 +32,10 @@ defmodule Ordo.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:commanded, "~> 1.4"},
+      {:eventstore, "~> 1.4"},
+      {:commanded_eventstore_adapter, "~> 1.4"},
+      {:commanded_ecto_projections, "~> 1.3"},
       {:bcrypt_elixir, "~> 3.0"},
       {:phoenix, "~> 1.7.10"},
       {:phoenix_ecto, "~> 4.4"},
@@ -63,9 +67,11 @@ defmodule Ordo.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
+      "db.reset": ["ecto.reset", "event_store.reset"],
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
+      "event_store.reset": ["event_store.drop", "event_store.create", "event_store.init"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind default", "esbuild default"],

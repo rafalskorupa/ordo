@@ -9,6 +9,7 @@ import Config
 
 config :ordo,
   ecto_repos: [Ordo.Repo],
+  event_stores: [Ordo.EventStore],
   generators: [timestamp_type: :utc_datetime, binary_id: true]
 
 # Configures the endpoint

@@ -10,6 +10,14 @@ config :ordo, Ordo.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
+config :ordo, Ordo.EventStore,
+  serializer: Commanded.Serialization.JsonSerializer,
+  username: "postgres",
+  password: "postgres",
+  database: "ordo_eventstore_dev",
+  hostname: "localhost",
+  pool_size: 10
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #

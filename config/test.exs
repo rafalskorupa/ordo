@@ -12,9 +12,16 @@ config :ordo, Ordo.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
-  database: "ordo_test#{System.get_env("MIX_TEST_PARTITION")}",
-  pool: Ecto.Adapters.SQL.Sandbox,
+  database: "ordo_test",
   pool_size: 10
+
+config :ordo, Ordo.EventStore,
+  serializer: Commanded.Serialization.JsonSerializer,
+  username: "postgres",
+  password: "postgres",
+  database: "ordo_eventstore_test",
+  hostname: "localhost",
+  pool_size: 1
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
