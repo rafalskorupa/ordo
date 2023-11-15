@@ -55,6 +55,19 @@ defmodule OrdoWeb.UserRegistrationLiveTest do
       assert response =~ "Log out"
     end
 
+    test "renders error for missing organisation name", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      result =
+        lv
+        |> form("#registration_form",
+          user: valid_user_attributes(organisation: %{name: ""})
+        )
+        |> render_submit()
+
+      assert result =~ "can&#39;t be blank"
+    end
+
     test "renders errors for duplicated email", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 

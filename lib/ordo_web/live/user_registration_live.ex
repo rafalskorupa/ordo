@@ -31,6 +31,10 @@ defmodule OrdoWeb.UserRegistrationLive do
           Oops, something went wrong! Please check the errors below.
         </.error>
 
+        <.inputs_for :let={organisation} field={@form[:organisation]}>
+          <.input type="text" field={organisation[:name]} label="Organisation Name" />
+        </.inputs_for>
+
         <.input field={@form[:email]} type="email" label="Email" required />
         <.input field={@form[:password]} type="password" label="Password" required />
 
