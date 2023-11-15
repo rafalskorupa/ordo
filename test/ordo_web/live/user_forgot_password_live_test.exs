@@ -43,7 +43,7 @@ defmodule OrdoWeb.UserForgotPasswordLiveTest do
 
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "If your email is in our system"
 
-      assert Repo.get_by!(Users.UserToken, user_id: user.id).context ==
+      assert Repo.get_by!(Users.UserToken, %{user_id: user.id}, skip_org_id: true).context ==
                "reset_password"
     end
 
@@ -57,7 +57,7 @@ defmodule OrdoWeb.UserForgotPasswordLiveTest do
         |> follow_redirect(conn, "/")
 
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "If your email is in our system"
-      assert Repo.all(Users.UserToken) == []
+      assert Repo.all(Users.UserToken, skip_org_id: true) == []
     end
   end
 end

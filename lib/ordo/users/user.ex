@@ -85,7 +85,7 @@ defmodule Ordo.Users.User do
   defp maybe_validate_unique_email(changeset, opts) do
     if Keyword.get(opts, :validate_email, true) do
       changeset
-      |> unsafe_validate_unique(:email, Ordo.Repo)
+      |> unsafe_validate_unique(:email, Ordo.Repo, repo_opts: [skip_org_id: true])
       |> unique_constraint(:email)
     else
       changeset

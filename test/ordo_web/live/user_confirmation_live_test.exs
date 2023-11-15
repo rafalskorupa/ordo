@@ -38,7 +38,7 @@ defmodule OrdoWeb.UserConfirmationLiveTest do
 
       assert Users.get_user!(user.id).confirmed_at
       refute get_session(conn, :user_token)
-      assert Repo.all(Users.UserToken) == []
+      assert Repo.all(Users.UserToken, skip_org_id: true) == []
 
       # when not logged in
       {:ok, lv, _html} = live(conn, ~p"/users/confirm/#{token}")

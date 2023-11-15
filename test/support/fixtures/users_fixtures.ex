@@ -5,13 +5,13 @@ defmodule Ordo.UsersFixtures do
   """
 
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
-  def unique_organisation_name, do: "Organisation #{System.unique_integer}"
+  def unique_organisation_name, do: "Organisation #{System.unique_integer()}"
   def valid_user_password, do: "hello world!"
 
   def valid_user_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
       organisation: %{
-        name: unique_organisation_name(),
+        name: unique_organisation_name()
       },
       email: unique_user_email(),
       password: valid_user_password()

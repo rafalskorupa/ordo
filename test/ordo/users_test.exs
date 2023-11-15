@@ -186,7 +186,10 @@ defmodule Ordo.UsersTest do
         end)
 
       {:ok, token} = Base.url_decode64(token, padding: false)
-      assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, token))
+
+      assert user_token =
+               Repo.get_by(UserToken, %{token: :crypto.hash(:sha256, token)}, skip_org_id: true)
+
       assert user_token.user_id == user.id
       assert user_token.sent_to == user.email
       assert user_token.context == "change:current@example.com"
@@ -208,31 +211,35 @@ defmodule Ordo.UsersTest do
 
     test "updates the email with a valid token", %{user: user, token: token, email: email} do
       assert Users.update_user_email(user, token) == :ok
-      changed_user = Repo.get!(User, user.id)
+      changed_user = Repo.get!(User, user.id, skip_org_id: true)
       assert changed_user.email != user.email
       assert changed_user.email == email
       assert changed_user.confirmed_at
       assert changed_user.confirmed_at != user.confirmed_at
-      refute Repo.get_by(UserToken, user_id: user.id)
+      refute Repo.get_by(UserToken, %{user_id: user.id}, skip_org_id: true)
     end
 
     test "does not update email with invalid token", %{user: user} do
       assert Users.update_user_email(user, "oops") == :error
-      assert Repo.get!(User, user.id).email == user.email
-      assert Repo.get_by(UserToken, user_id: user.id)
+      assert Repo.get!(User, user.id, skip_org_id: true).email == user.email
+      assert Repo.get_by(UserToken, %{user_id: user.id}, skip_org_id: true)
     end
 
     test "does not update email if user email changed", %{user: user, token: token} do
       assert Users.update_user_email(%{user | email: "current@example.com"}, token) == :error
-      assert Repo.get!(User, user.id).email == user.email
-      assert Repo.get_by(UserToken, user_id: user.id)
+      assert Repo.get!(User, user.id, skip_org_id: true).email == user.email
+      assert Repo.get_by(UserToken, %{user_id: user.id}, skip_org_id: true)
     end
 
     test "does not update email if token expired", %{user: user, token: token} do
-      {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
+      {1, nil} =
+        Repo.update_all(UserToken, [set: [inserted_at: ~N[2020-01-01 00:00:00]]],
+          skip_org_id: true
+        )
+
       assert Users.update_user_email(user, token) == :error
-      assert Repo.get!(User, user.id).email == user.email
-      assert Repo.get_by(UserToken, user_id: user.id)
+      assert Repo.get!(User, user.id, skip_org_id: true).email == user.email
+      assert Repo.get_by(UserToken, %{user_id: user.id}, skip_org_id: true)
     end
   end
 
@@ -306,7 +313,7 @@ defmodule Ordo.UsersTest do
           password: "new valid password"
         })
 
-      refute Repo.get_by(UserToken, user_id: user.id)
+      refute Repo.get_by(UserToken, %{user_id: user.id}, skip_org_id: true)
     end
   end
 
@@ -317,7 +324,7 @@ defmodule Ordo.UsersTest do
 
     test "generates a token", %{user: user} do
       token = Users.generate_user_session_token(user)
-      assert user_token = Repo.get_by(UserToken, token: token)
+      assert user_token = Repo.get_by(UserToken, [token: token], skip_org_id: true)
       assert user_token.context == "session"
 
       # Creating the same token for another user should fail
@@ -348,7 +355,11 @@ defmodule Ordo.UsersTest do
     end
 
     test "does not return user for expired token", %{token: token} do
-      {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
+      {1, nil} =
+        Repo.update_all(UserToken, [set: [inserted_at: ~N[2020-01-01 00:00:00]]],
+          skip_org_id: true
+        )
+
       refute Users.get_user_by_session_token(token)
     end
   end
@@ -374,7 +385,10 @@ defmodule Ordo.UsersTest do
         end)
 
       {:ok, token} = Base.url_decode64(token, padding: false)
-      assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, token))
+
+      assert user_token =
+               Repo.get_by(UserToken, [token: :crypto.hash(:sha256, token)], skip_org_id: true)
+
       assert user_token.user_id == user.id
       assert user_token.sent_to == user.email
       assert user_token.context == "confirm"
@@ -397,21 +411,25 @@ defmodule Ordo.UsersTest do
       assert {:ok, confirmed_user} = Users.confirm_user(token)
       assert confirmed_user.confirmed_at
       assert confirmed_user.confirmed_at != user.confirmed_at
-      assert Repo.get!(User, user.id).confirmed_at
-      refute Repo.get_by(UserToken, user_id: user.id)
+      assert Repo.get!(User, user.id, skip_org_id: true).confirmed_at
+      refute Repo.get_by(UserToken, %{user_id: user.id}, skip_org_id: true)
     end
 
     test "does not confirm with invalid token", %{user: user} do
       assert Users.confirm_user("oops") == :error
-      refute Repo.get!(User, user.id).confirmed_at
-      assert Repo.get_by(UserToken, user_id: user.id)
+      refute Repo.get!(User, user.id, skip_org_id: true).confirmed_at
+      assert Repo.get_by(UserToken, %{user_id: user.id}, skip_org_id: true)
     end
 
     test "does not confirm email if token expired", %{user: user, token: token} do
-      {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
+      {1, nil} =
+        Repo.update_all(UserToken, [set: [inserted_at: ~N[2020-01-01 00:00:00]]],
+          skip_org_id: true
+        )
+
       assert Users.confirm_user(token) == :error
-      refute Repo.get!(User, user.id).confirmed_at
-      assert Repo.get_by(UserToken, user_id: user.id)
+      refute Repo.get!(User, user.id, skip_org_id: true).confirmed_at
+      assert Repo.get_by(UserToken, %{user_id: user.id}, skip_org_id: true)
     end
   end
 
@@ -427,7 +445,10 @@ defmodule Ordo.UsersTest do
         end)
 
       {:ok, token} = Base.url_decode64(token, padding: false)
-      assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, token))
+
+      assert user_token =
+               Repo.get_by(UserToken, [token: :crypto.hash(:sha256, token)], skip_org_id: true)
+
       assert user_token.user_id == user.id
       assert user_token.sent_to == user.email
       assert user_token.context == "reset_password"
@@ -448,18 +469,22 @@ defmodule Ordo.UsersTest do
 
     test "returns the user with valid token", %{user: %{id: id}, token: token} do
       assert %User{id: ^id} = Users.get_user_by_reset_password_token(token)
-      assert Repo.get_by(UserToken, user_id: id)
+      assert Repo.get_by(UserToken, %{user_id: id}, skip_org_id: true)
     end
 
     test "does not return the user with invalid token", %{user: user} do
       refute Users.get_user_by_reset_password_token("oops")
-      assert Repo.get_by(UserToken, user_id: user.id)
+      assert Repo.get_by(UserToken, %{user_id: user.id}, skip_org_id: true)
     end
 
     test "does not return the user if token expired", %{user: user, token: token} do
-      {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
+      {1, nil} =
+        Repo.update_all(UserToken, [set: [inserted_at: ~N[2020-01-01 00:00:00]]],
+          skip_org_id: true
+        )
+
       refute Users.get_user_by_reset_password_token(token)
-      assert Repo.get_by(UserToken, user_id: user.id)
+      assert Repo.get_by(UserToken, %{user_id: user.id}, skip_org_id: true)
     end
   end
 
@@ -496,7 +521,7 @@ defmodule Ordo.UsersTest do
     test "deletes all tokens for the given user", %{user: user} do
       _ = Users.generate_user_session_token(user)
       {:ok, _} = Users.reset_user_password(user, %{password: "new valid password"})
-      refute Repo.get_by(UserToken, user_id: user.id)
+      refute Repo.get_by(UserToken, %{user_id: user.id}, skip_org_id: true)
     end
   end
 

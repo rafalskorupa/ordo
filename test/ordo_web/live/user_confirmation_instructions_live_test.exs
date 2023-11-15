@@ -29,7 +29,8 @@ defmodule OrdoWeb.UserConfirmationInstructionsLiveTest do
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
                "If your email is in our system"
 
-      assert Repo.get_by!(Users.UserToken, user_id: user.id).context == "confirm"
+      assert Repo.get_by!(Users.UserToken, %{user_id: user.id}, skip_org_id: true).context ==
+               "confirm"
     end
 
     test "does not send confirmation token if user is confirmed", %{conn: conn, user: user} do
@@ -46,7 +47,7 @@ defmodule OrdoWeb.UserConfirmationInstructionsLiveTest do
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
                "If your email is in our system"
 
-      refute Repo.get_by(Users.UserToken, user_id: user.id)
+      refute Repo.get_by(Users.UserToken, %{user_id: user.id}, skip_org_id: true)
     end
 
     test "does not send confirmation token if email is invalid", %{conn: conn} do
@@ -61,7 +62,7 @@ defmodule OrdoWeb.UserConfirmationInstructionsLiveTest do
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~
                "If your email is in our system"
 
-      assert Repo.all(Users.UserToken) == []
+      assert Repo.all(Users.UserToken, skip_org_id: true) == []
     end
   end
 end

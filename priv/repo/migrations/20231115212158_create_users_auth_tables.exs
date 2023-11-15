@@ -10,7 +10,13 @@ defmodule Ordo.Repo.Migrations.CreateUsersAuthTables do
       add :hashed_password, :string, null: false
       add :confirmed_at, :naive_datetime
 
-      add :organisation_id, references(:organisations, type: :binary_id, on_delete: :restrict, column: :organisation_id), null: false
+      add :organisation_id,
+          references(:organisations,
+            type: :binary_id,
+            on_delete: :restrict,
+            column: :organisation_id
+          ),
+          null: false
 
       timestamps(type: :utc_datetime)
     end
