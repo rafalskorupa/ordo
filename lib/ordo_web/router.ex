@@ -48,6 +48,18 @@ defmodule OrdoWeb.Router do
   ## Authentication routes
 
   scope "/", OrdoWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live_session :require_authenticated_user,
+      on_mount: [{OrdoWeb.UserAuth, :ensure_authenticated}] do
+      live "/main", OrganisationLive.Show, :show
+
+      live "/users/settings", UserSettingsLive, :edit
+      live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
+    end
+  end
+
+  scope "/", OrdoWeb do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
 
     live_session :redirect_if_user_is_authenticated,
@@ -59,16 +71,6 @@ defmodule OrdoWeb.Router do
     end
 
     post "/users/log_in", UserSessionController, :create
-  end
-
-  scope "/", OrdoWeb do
-    pipe_through [:browser, :require_authenticated_user]
-
-    live_session :require_authenticated_user,
-      on_mount: [{OrdoWeb.UserAuth, :ensure_authenticated}] do
-      live "/users/settings", UserSettingsLive, :edit
-      live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
-    end
   end
 
   scope "/", OrdoWeb do

@@ -235,7 +235,14 @@ defmodule Ordo.Users do
   """
   def get_user_by_session_token(token) do
     {:ok, query} = UserToken.verify_session_token_query(token)
-    Repo.one(query, skip_org_id: true)
+
+    case Repo.one(query, skip_org_id: true) do
+      nil ->
+        nil
+
+      %{} = user ->
+        Repo.preload(user, :organisation, skip_org_id: true)
+    end
   end
 
   @doc """
