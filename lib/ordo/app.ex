@@ -5,4 +5,6 @@ defmodule Ordo.App do
       adapter: Commanded.EventStore.Adapters.EventStore,
       event_store: Ordo.EventStore
     ]
+
+  router(Ordo.Authentication.Router)
 end

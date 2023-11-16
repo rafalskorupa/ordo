@@ -18,7 +18,8 @@ defmodule Ordo.Application do
       # {Ordo.Worker, arg},
       # Start to serve requests, typically the last entry
       OrdoWeb.Endpoint,
-      Ordo.App
+      Ordo.App,
+      Ordo.Authentication.Projectors.Account
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

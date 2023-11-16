@@ -14,7 +14,7 @@ config :ordo, Ordo.EventStore,
   serializer: Commanded.Serialization.JsonSerializer,
   username: "postgres",
   password: "postgres",
-  database: "ordo_eventstore_dev",
+  database: "ordo_store_dev",
   hostname: "localhost",
   pool_size: 10
 
