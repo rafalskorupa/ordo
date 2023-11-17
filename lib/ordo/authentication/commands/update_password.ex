@@ -13,20 +13,19 @@ defmodule Ordo.Authentication.Commands.UpdatePassword do
 
   def validate!(command) do
     command
-    |> change()
     |> changeset(%{})
     |> apply_action!(:validate!)
   end
 
-  def build(%{account_id: account_id}, attrs) do
-    %__MODULE__{account_id: account_id}
+  def build(%{account: %{id: account_id, email: email}}, attrs) do
+    %__MODULE__{account_id: account_id, email: email}
     |> changeset(attrs)
     |> apply_action(:validate!)
   end
 
   def changeset(%__MODULE__{} = command, attrs) do
     command
-    |> cast(attrs, [:email, :new_password, :old_password])
+    |> cast(attrs, [:new_password, :old_password])
     |> validate_required([:account_id, :email, :new_password, :old_password])
     |> validate_email()
     |> validate_password(:new_password)

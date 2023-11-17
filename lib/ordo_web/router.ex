@@ -45,6 +45,14 @@ defmodule OrdoWeb.Router do
     end
   end
 
+  scope "/", OrdoWeb do
+    pipe_through [:browser]
+
+    live "/register", Authentication.RegisterLive, :new
+
+    live "/sign_in", Authentication.SignInLive, :new
+  end
+
   ## Authentication routes
 
   scope "/", OrdoWeb do

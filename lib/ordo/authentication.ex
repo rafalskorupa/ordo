@@ -4,16 +4,20 @@ defmodule Ordo.Authentication do
 
   # Actions
 
-  @spec sign_in(String.t(), String.t()) :: {:ok, String.t()} | {:error, :invalid_credentials}
-  def sign_in(email, password) do
+  @spec sign_in(map()) :: {:ok, String.t()} | {:error, Ecto.Changeset.t()}
+  def sign_in(params) do
     with {:ok, command} <-
-           Authentication.Commands.SignIn.build(%{email: email, password: password}),
+           Authentication.Commands.SignIn.build(params),
          :ok <- Ordo.App.dispatch(command) do
       account =
-        Repo.get_by!(Authentication.Projections.Account, [email: email], skip_org_id: true)
+        Repo.get_by!(Authentication.Projections.Account, [email: params.email], skip_org_id: true)
 
-      {:ok, Ordo.Actor.build(%{account_id: account.id})}
+      {:ok, Ordo.Actor.build(%{account: account})}
     end
+  end
+
+  def sign_in_changeset(command \\ %Authentication.Commands.SignIn{}, attrs) do
+    Authentication.Commands.SignIn.changeset(command, %{})
   end
 
   @spec register(map()) :: :ok | {:error, Ecto.Changeset.t()}
@@ -30,7 +34,7 @@ defmodule Ordo.Authentication do
   end
 
   @spec update_password(Ordo.Actor.t(), map()) :: :ok | {:error, Ecto.Changeset.t()}
-  def update_password(%{account_id: _user_id} = actor, attrs) do
+  def update_password(%{account: %{}} = actor, attrs) do
     with {:ok, command} <- Authentication.Commands.UpdatePassword.build(actor, attrs) do
       Ordo.App.dispatch(command, consistency: :strong)
     end

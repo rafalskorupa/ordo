@@ -27,9 +27,7 @@ defmodule Ordo.Storage do
     """
     TRUNCATE TABLE
       projection_versions,
-      organisations,
-      users,
-      users_tokens
+      auth_accounts
     RESTART IDENTITY
     CASCADE;
     """

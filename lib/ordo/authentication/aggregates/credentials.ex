@@ -43,17 +43,18 @@ defmodule Ordo.Authentication.Aggregates.Credentials do
         hashed_password: Password.hash_password(new_password)
       }
     else
+
       {:error, :invalid_password}
     end
   end
 
   def execute(%Credentials{} = credentials, %SignIn{} = command) do
-    %{password: password} = command
+    %{password: password} = SignIn.validate!(command)
 
     if Password.password_valid?(credentials.hashed_password, password) do
       :ok
     else
-      {:error, :invalid_credentials}
+      {:error, SignIn.unauthenticated_error(command)}
     end
   end
 
