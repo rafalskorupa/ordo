@@ -75,6 +75,36 @@ defmodule OrdoWeb.ActorAuth do
     end
   end
 
+  def on_mount(:ensure_corpo_actor, %{"corpo_id" => corpo_id}, session, socket) do
+    socket = mount_current_user(socket, session)
+    actor = socket.assigns.actor |> IO.inspect()
+
+    Ordo.People.Projections.Employee
+    |> Ordo.Repo.get_by(account_id: actor.account.id, corpo_id: corpo_id)
+    |> IO.inspect()
+    |> case do
+      %{} = employee ->
+        employee = Ordo.Repo.preload(employee, :corpo)
+
+        actor = Ordo.Actor.set_corpo(actor, employee)
+
+        socket =
+          socket
+          |> Phoenix.Component.assign(:actor, actor)
+          |> Phoenix.Component.assign(:corpo, actor.corpo)
+
+        {:cont, socket}
+
+      nil ->
+        socket =
+          socket
+          |> Phoenix.LiveView.put_flash(:error, "You don't have access to this page")
+          |> Phoenix.LiveView.redirect(to: ~p"/auth/corpos")
+
+        {:halt, socket}
+    end
+  end
+
   def on_mount(:redirect_if_actor_is_authenticated, _params, session, socket) do
     socket = mount_current_user(socket, session)
 
@@ -239,6 +269,18 @@ defmodule OrdoWeb.ActorAuth do
       |> put_flash(:error, "You must log in to access this page.")
       |> maybe_store_return_to()
       |> redirect(to: ~p"/auth/sign_in")
+      |> halt()
+    end
+  end
+
+  def ensure_corpo(conn, _opts) do
+    if Ordo.Actor.has_corpo?(conn.assigns.actor) do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must select a corpo to access this page.")
+      |> maybe_store_return_to()
+      |> redirect(to: ~p"/auth/corpos")
       |> halt()
     end
   end

@@ -17,12 +17,24 @@ defmodule OrdoWeb.Router do
     plug :accepts, ["json"]
   end
 
+  scope "/app/:corpo_id", OrdoWeb.App do
+    pipe_through [:browser]
+
+    live_session :ensure_corpo_actor,
+      on_mount: [
+        {OrdoWeb.ActorAuth, :ensure_corpo_actor}
+      ] do
+      live "/", DashboardLive, :index
+    end
+  end
+
   scope "/", OrdoWeb do
     pipe_through [:browser]
 
     get "/", PageController, :home
 
     scope "/auth", Authentication do
+      get "/log_out", SessionController, :delete
       delete "/log_out", SessionController, :delete
     end
   end
@@ -33,11 +45,9 @@ defmodule OrdoWeb.Router do
     scope "/auth", Authentication do
       live_session :require_authenticated_actor,
         on_mount: [{OrdoWeb.ActorAuth, :ensure_authenticated}] do
-        live "/corpos", CorposLive, :index
         live "/corpos/new", CorposLive, :new
+        live "/corpos", CorposLive, :index
       end
-
-      get "/set_corpo/:corpo_id", SessionController, :update
     end
   end
 

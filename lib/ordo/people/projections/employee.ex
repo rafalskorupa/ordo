@@ -7,8 +7,9 @@ defmodule Ordo.People.Projections.Employee do
   schema "employees" do
     field :first_name, :string
     field :last_name, :string
-    field :corpo_id, :binary_id
-    field :account_id, :binary_id
+
+    belongs_to(:corpo, Ordo.Corpos.Projections.Corpo)
+    belongs_to(:account, Ordo.Authentication.Projections.Account)
 
     timestamps(type: :utc_datetime)
   end

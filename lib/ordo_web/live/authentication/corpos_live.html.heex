@@ -24,9 +24,13 @@
   <.table id="corpos" rows={@corpos}>
     <:col :let={corpo} label="Corpo"><%= corpo.name %></:col>
     <:action :let={corpo}>
-      <.link href={~p"/auth/set_corpo/#{corpo.id}"} >
+      <.link href={~p"/app/#{corpo.id}"}>
         Login
       </.link>
     </:action>
   </.table>
+
+  <.link patch={~p"/auth/corpos/new"}>
+    Create new Corpo
+  </.link>
 <% end %>

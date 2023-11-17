@@ -32,19 +32,6 @@ defmodule OrdoWeb.Authentication.SessionController do
     end
   end
 
-  # TODO: Handle errors? Maybe? Cleanup? Anything?
-  def update(conn, %{"corpo_id" => corpo_id}) do
-
-    session_id = ActorAuth.get_session_id(conn)
-    corpo = Ordo.Repo.get(Ordo.Corpos.Projections.Corpo, corpo_id)
-
-    :ok = Authentication.set_active_corpo_id(session_id, corpo_id)
-
-    conn
-    |> put_flash(:info, "Logged to #{corpo.name}")
-    |> redirect(to: ~p"/")
-  end
-
   def delete(conn, _params) do
     conn
     |> put_flash(:info, "Logged out successfully.")

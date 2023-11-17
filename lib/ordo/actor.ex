@@ -7,8 +7,14 @@ defmodule Ordo.Actor do
           employee: %{id: String.t()} | nil
         }
 
+  def set_corpo(%__MODULE__{} = actor, %{corpo: %{} = corpo} = employee) do
+    %Ordo.Actor{actor | corpo: corpo, employee: employee}
+  end
+
   def authenticated?(%__MODULE__{account: %{}}), do: true
   def authenticated?(_), do: false
+
+  def has_corpo?(%__MODULE__{corpo: corpo}), do: !!corpo
 
   def corpo_id(%__MODULE__{corpo: nil}), do: nil
   def corpo_id(%__MODULE__{corpo: %{id: corpo_id}}), do: corpo_id

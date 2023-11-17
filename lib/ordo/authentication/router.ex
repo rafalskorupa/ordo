@@ -20,8 +20,7 @@ defmodule Ordo.Authentication.Router do
   dispatch(
     [
       Ordo.Authentication.Commands.CreateSession,
-      Ordo.Authentication.Commands.VerifySession,
-      Ordo.Authentication.Commands.SetSessionCorpo
+      Ordo.Authentication.Commands.VerifySession
     ],
     to: Ordo.Authentication.Aggregates.Session,
     identity: :session_id

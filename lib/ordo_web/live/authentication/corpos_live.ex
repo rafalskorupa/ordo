@@ -28,8 +28,8 @@ defmodule OrdoWeb.Authentication.CorposLive do
   @impl true
   def handle_event("save", %{"create_corpo" => corpo_params}, socket) do
     case Corpos.create_corpo(socket.assigns.actor, corpo_params) do
-      {:ok, _corpo} ->
-        {:noreply, socket |> redirect(to: ~p"/auth/corpos")}
+      {:ok, corpo} ->
+        {:noreply, socket |> redirect(to: ~p"/app/#{corpo.id}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
