@@ -29,7 +29,6 @@ defmodule OrdoWeb.Authentication.SignInLive do
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
     form = to_form(changeset, as: "login")
 
-
     if changeset.valid? do
       assign(socket, form: form, credentials_valid: false)
     else

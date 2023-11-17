@@ -5,16 +5,17 @@ defmodule Ordo.Authentication.Commands.SignIn do
   embedded_schema do
     field(:email)
     field(:password)
+    field(:session_id)
   end
 
   def changeset(%__MODULE__{} = command, attrs) do
     command
     |> cast(attrs, [:email, :password])
-    |> validate_required([:email, :password])
+    |> validate_required([:email, :password, :session_id])
   end
 
   def build(attrs) do
-    %__MODULE__{}
+    %__MODULE__{session_id: Ecto.UUID.generate()}
     |> changeset(attrs)
     |> apply_action(:build)
   end

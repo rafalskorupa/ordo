@@ -4,6 +4,21 @@ defmodule Ordo.Authentication do
 
   # Actions
 
+  @spec create_session(Ordo.Actor.t()) :: {:ok, String.t()}
+  def create_session(actor) do
+    with {:ok, command} <- Authentication.Commands.CreateSession.build(actor),
+         :ok <- Ordo.App.dispatch(command, consistency: :strong) do
+      {:ok, command.session_id}
+    end
+  end
+
+  @spec verify_session(String.t()) :: :ok | {:error, any()}
+  def verify_session(session_id) do
+    with {:ok, command} <- Authentication.Commands.VerifySession.build(session_id) do
+      Ordo.App.dispatch(command)
+    end
+  end
+
   @spec sign_in(map()) :: {:ok, String.t()} | {:error, Ecto.Changeset.t()}
   def sign_in(params) do
     with {:ok, command} <-
@@ -17,7 +32,7 @@ defmodule Ordo.Authentication do
   end
 
   def sign_in_changeset(command \\ %Authentication.Commands.SignIn{}, attrs) do
-    Authentication.Commands.SignIn.changeset(command, %{})
+    Authentication.Commands.SignIn.changeset(command, attrs)
   end
 
   @spec register(map()) :: :ok | {:error, Ecto.Changeset.t()}

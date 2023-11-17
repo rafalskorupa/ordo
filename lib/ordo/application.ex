@@ -19,7 +19,9 @@ defmodule Ordo.Application do
       # Start to serve requests, typically the last entry
       OrdoWeb.Endpoint,
       Ordo.App,
-      Ordo.Authentication.Projectors.Account
+      # TODO: Create separate supervisor for Projectors
+      Ordo.Authentication.Projectors.Account,
+      Ordo.Authentication.Projectors.Session
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

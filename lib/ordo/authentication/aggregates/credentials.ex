@@ -43,7 +43,6 @@ defmodule Ordo.Authentication.Aggregates.Credentials do
         hashed_password: Password.hash_password(new_password)
       }
     else
-
       {:error, :invalid_password}
     end
   end
