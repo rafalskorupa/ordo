@@ -1,9 +1,13 @@
 defmodule Ordo.Actor do
+  @derive Jason.Encoder
   defstruct [:account]
 
   @type t :: %__MODULE__{
           account: %{id: String.t(), email: String.t()} | nil
         }
+
+  def authenticated?(%__MODULE__{account: %{}}), do: true
+  def authenticated?(_), do: false
 
   def build(nil) do
     %__MODULE__{}

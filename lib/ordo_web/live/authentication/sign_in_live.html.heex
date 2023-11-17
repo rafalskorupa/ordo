@@ -1,11 +1,14 @@
 <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
   Login
 </h2>
-<.simple_form for={@form} id="login" phx-submit="save" method="post" class="mt-8 space-y-6">
-  <.error :if={@credentials_valid}>
-    Your credentials are invalid
-  </.error>
-
+<.simple_form
+  for={@form}
+  id="login"
+  action={~p"/auth/log_in"}
+  phx-update="ignore"
+  method="post"
+  class="mt-8 space-y-6"
+>
   <.input field={@form[:email]} type="email" label="Email" required />
   <.input field={@form[:password]} type="password" label="Password" required />
 
@@ -20,7 +23,10 @@
 
   <div class="text-sm font-medium text-gray-500 dark:text-gray-400">
     You don't have an account?
-    <.link href={~p"/register"} class="text-primary-700 hover:underline dark:text-primary-500">
+    <.link
+      href={~p"/auth/register"}
+      class="text-primary-700 hover:underline dark:text-primary-500"
+    >
       Register here
     </.link>
   </div>

@@ -4,7 +4,7 @@ defmodule Ordo.Authentication.Projections.Session do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "auth_sessions" do
-    field :account_id, :binary_id
+    belongs_to(:account, Ordo.Authentication.Projections.Account)
 
     timestamps(type: :utc_datetime)
   end

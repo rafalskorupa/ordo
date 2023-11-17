@@ -2,6 +2,20 @@ defmodule Ordo.Authentication do
   alias Ordo.Repo
   alias Ordo.Authentication
 
+  # Queries
+
+  def get_session(session_id) do
+    with %{} = session <- Repo.get(Authentication.Projections.Session, session_id) do
+      Repo.preload(session, [:account])
+    end
+  end
+
+  def get_actor_by_session_id(session_id) do
+    session_id
+    |> get_session()
+    |> Ordo.Actor.build()
+  end
+
   # Actions
 
   @spec create_session(Ordo.Actor.t()) :: {:ok, String.t()}
@@ -12,6 +26,10 @@ defmodule Ordo.Authentication do
     end
   end
 
+  def delete_session(_session_id) do
+    :ok
+  end
+
   @spec verify_session(String.t()) :: :ok | {:error, any()}
   def verify_session(session_id) do
     with {:ok, command} <- Authentication.Commands.VerifySession.build(session_id) do
@@ -19,13 +37,15 @@ defmodule Ordo.Authentication do
     end
   end
 
-  @spec sign_in(map()) :: {:ok, String.t()} | {:error, Ecto.Changeset.t()}
+  @spec sign_in(map()) :: {:ok, String.t()} | {:error, :invalid_credentials}
   def sign_in(params) do
     with {:ok, command} <-
            Authentication.Commands.SignIn.build(params),
          :ok <- Ordo.App.dispatch(command) do
       account =
-        Repo.get_by!(Authentication.Projections.Account, [email: params.email], skip_org_id: true)
+        Repo.get_by!(Authentication.Projections.Account, [email: command.email],
+          skip_org_id: true
+        )
 
       {:ok, Ordo.Actor.build(%{account: account})}
     end

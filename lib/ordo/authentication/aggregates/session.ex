@@ -10,7 +10,9 @@ defmodule Ordo.Authentication.Aggregates.Session do
 
   def execute(%Session{}, %CreateSession{session_id: session_id, actor: actor}) do
     %{account: %{id: account_id}} = actor
-    with :ok <- Ordo.App.dispatch(%Ordo.Authentication.Commands.VerifyAccount{account_id: account_id}) do
+
+    with :ok <-
+           Ordo.App.dispatch(%Ordo.Authentication.Commands.VerifyAccount{account_id: account_id}) do
       %SessionCreated{
         account_id: account_id,
         session_id: session_id

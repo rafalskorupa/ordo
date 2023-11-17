@@ -28,7 +28,8 @@ defmodule Ordo.AuthenticationTest do
     test "it returns invalid_account_id error" do
       account_id = Ecto.UUID.generate()
 
-      assert {:error, :invalid_account_id} = Authentication.create_session(%Ordo.Actor{account: %{id: account_id}})
+      assert {:error, :invalid_account_id} =
+               Authentication.create_session(%Ordo.Actor{account: %{id: account_id}})
     end
   end
 
@@ -49,14 +50,14 @@ defmodule Ordo.AuthenticationTest do
     test "it returns actor based on account" do
       %{actor: actor} = create_account()
 
-      assert {:ok, actor} == Authentication.sign_in(%{email: "rafal@skorupa.io", password: "123123123123"})
+      assert {:ok, actor} ==
+               Authentication.sign_in(%{email: "rafal@skorupa.io", password: "123123123123"})
     end
 
     test "it returns invalid credentials error" do
-      assert {:error, changeset} =
+      assert {:error, :invalid_credentials} =
                Authentication.sign_in(%{email: "rafal@skorupa.io", password: "123123123123"})
-        assert errors_on(changeset) == %{base: ["Invalid credentials"]}
-              end
+    end
   end
 
   describe "register/1" do

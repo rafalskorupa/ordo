@@ -19,7 +19,9 @@ defmodule OrdoWeb.Authentication.RegisterLive do
   def handle_event("save", %{"register" => user_params}, socket) do
     case Authentication.register(user_params) do
       :ok ->
-        {:noreply, socket}
+        changeset = Authentication.register_changeset(user_params)
+
+        {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}

@@ -1,7 +1,7 @@
 defmodule OrdoWeb.Router do
   use OrdoWeb, :router
 
-  import OrdoWeb.UserAuth
+  import OrdoWeb.ActorAuth
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -10,7 +10,7 @@ defmodule OrdoWeb.Router do
     plug :put_root_layout, html: {OrdoWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
-    plug :fetch_current_user
+    plug :fetch_current_actor
   end
 
   pipeline :api do
@@ -18,15 +18,26 @@ defmodule OrdoWeb.Router do
   end
 
   scope "/", OrdoWeb do
-    pipe_through :browser
+    pipe_through [:browser]
 
     get "/", PageController, :home
-  end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", OrdoWeb do
-  #   pipe_through :api
-  # end
+    scope "/auth", Authentication do
+      delete "/auth/log_out", SessionController, :delete
+    end
+
+    scope "/auth", Authentication do
+      pipe_through([:redirect_if_actor_is_authenticated])
+
+      live_session :redirect_if_actor_is_authenticated,
+        on_mount: [{OrdoWeb.ActorAuth, :redirect_if_actor_is_authenticated}] do
+        live "/register", RegisterLive, :new
+        live "/sign_in", SignInLive, :new
+      end
+
+      post "/log_in", SessionController, :create
+    end
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:ordo, :dev_routes) do
@@ -42,54 +53,6 @@ defmodule OrdoWeb.Router do
 
       live_dashboard "/dashboard", metrics: OrdoWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
-    end
-  end
-
-  scope "/", OrdoWeb do
-    pipe_through [:browser]
-
-    live "/register", Authentication.RegisterLive, :new
-
-    live "/sign_in", Authentication.SignInLive, :new
-  end
-
-  ## Authentication routes
-
-  scope "/", OrdoWeb do
-    pipe_through [:browser, :require_authenticated_user]
-
-    live_session :require_authenticated_user,
-      on_mount: [{OrdoWeb.UserAuth, :ensure_authenticated}] do
-      live "/main", OrganisationLive.Show, :show
-
-      live "/users/settings", UserSettingsLive, :edit
-      live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
-    end
-  end
-
-  scope "/", OrdoWeb do
-    pipe_through [:browser, :redirect_if_user_is_authenticated]
-
-    live_session :redirect_if_user_is_authenticated,
-      on_mount: [{OrdoWeb.UserAuth, :redirect_if_user_is_authenticated}] do
-      live "/users/register", UserRegistrationLive, :new
-      live "/users/log_in", UserLoginLive, :new
-      live "/users/reset_password", UserForgotPasswordLive, :new
-      live "/users/reset_password/:token", UserResetPasswordLive, :edit
-    end
-
-    post "/users/log_in", UserSessionController, :create
-  end
-
-  scope "/", OrdoWeb do
-    pipe_through [:browser]
-
-    delete "/users/log_out", UserSessionController, :delete
-
-    live_session :current_user,
-      on_mount: [{OrdoWeb.UserAuth, :mount_current_user}] do
-      live "/users/confirm/:token", UserConfirmationLive, :edit
-      live "/users/confirm", UserConfirmationInstructionsLive, :new
     end
   end
 end

@@ -53,7 +53,7 @@ defmodule Ordo.Authentication.Aggregates.Credentials do
     if Password.password_valid?(credentials.hashed_password, password) do
       :ok
     else
-      {:error, SignIn.unauthenticated_error(command)}
+      {:error, :invalid_credentials}
     end
   end
 
