@@ -23,7 +23,7 @@ defmodule OrdoWeb.Router do
     get "/", PageController, :home
 
     scope "/auth", Authentication do
-      delete "/auth/log_out", SessionController, :delete
+      delete "/log_out", SessionController, :delete
     end
 
     scope "/auth", Authentication do
