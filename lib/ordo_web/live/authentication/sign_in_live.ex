@@ -1,8 +1,6 @@
 defmodule OrdoWeb.Authentication.SignInLive do
   use OrdoWeb, :live_view
 
-  alias Ordo.Authentication
-
   @impl true
   def mount(_params, _session, socket) do
     email = live_flash(socket.assigns.flash, :email)

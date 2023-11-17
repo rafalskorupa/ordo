@@ -9,13 +9,7 @@ defmodule Ordo.AuthenticationTest do
   @email "rafal@skorupa.io"
   @password "123123123123"
 
-  defp create_account(_ \\ %{}) do
-    Authentication.register(%{email: @email, password: @password})
-    account = Repo.get_by(Account, email: @email)
-    actor = Ordo.Actor.build(%{account: account})
-
-    %{account: account, actor: actor}
-  end
+  import Ordo.AuthFixtures
 
   describe "create_session/1" do
     test "it creates session for actor" do
@@ -48,7 +42,7 @@ defmodule Ordo.AuthenticationTest do
 
   describe "sign_in/2" do
     test "it returns actor based on account" do
-      %{actor: actor} = create_account()
+      %{actor: actor} = create_account(%{email: "rafal@skorupa.io", password: "123123123123"})
 
       assert {:ok, actor} ==
                Authentication.sign_in(%{email: "rafal@skorupa.io", password: "123123123123"})
@@ -62,12 +56,12 @@ defmodule Ordo.AuthenticationTest do
 
   describe "register/1" do
     test "creates an account" do
-      assert :ok == Authentication.register(%{email: @email, password: @password})
+      create_account(%{email: @email, password: @password})
       assert Repo.get_by(Account, email: @email)
     end
 
     test "enforce uniquness of email" do
-      assert %{account: %{id: account_id}} = create_account()
+      assert %{account: %{id: account_id}} = create_account(%{email: @email, password: @password})
       assert {:error, changeset} = Authentication.register(%{email: @email, password: @password})
 
       assert errors_on(changeset) == %{email: ["has already been taken"]}
@@ -82,7 +76,9 @@ defmodule Ordo.AuthenticationTest do
   end
 
   describe "update_password/2" do
-    setup [:create_account]
+    setup do
+      create_account(%{email: @email, password: @password})
+    end
 
     test "it updates password", %{account: account, actor: actor} do
       new_password = "new-password-123"

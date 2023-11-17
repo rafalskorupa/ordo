@@ -7,4 +7,6 @@ defmodule Ordo.App do
     ]
 
   router(Ordo.Authentication.Router)
+  router(Ordo.Corpos.Router)
+  router(Ordo.People.Router)
 end

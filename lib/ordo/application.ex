@@ -21,7 +21,10 @@ defmodule Ordo.Application do
       Ordo.App,
       # TODO: Create separate supervisor for Projectors
       Ordo.Authentication.Projectors.Account,
-      Ordo.Authentication.Projectors.Session
+      Ordo.Authentication.Projectors.Session,
+      Ordo.Corpos.Projectors.Corpo,
+      Ordo.People.Projectors.Employee,
+      Ordo.People.Handlers.CreateOwnerEmployee
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

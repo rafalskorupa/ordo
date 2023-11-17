@@ -69,7 +69,7 @@ defmodule OrdoWeb.ActorAuth do
       socket =
         socket
         |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
-        |> Phoenix.LiveView.redirect(to: ~p"/users/log_in")
+        |> Phoenix.LiveView.redirect(to: ~p"/auth/log_in")
 
       {:halt, socket}
     end
@@ -177,7 +177,7 @@ defmodule OrdoWeb.ActorAuth do
     {session_id, conn} = ensure_actor_token(conn)
 
     actor =
-      if IO.inspect(session_id) do
+      if session_id do
         Authentication.get_actor_by_session_id(session_id)
       else
         %Ordo.Actor{}
