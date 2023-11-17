@@ -9,8 +9,7 @@ defmodule Ordo.Repo.Migrations.CreateEmployees do
 
       add :corpo_id, :binary_id
 
-      add :account_id, :binary_id,
-        null: true
+      add :account_id, :binary_id, null: true
 
       timestamps(type: :utc_datetime)
     end

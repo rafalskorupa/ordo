@@ -6,14 +6,20 @@ defmodule Ordo.Authentication do
 
   def get_session(session_id) do
     with %{} = session <- Repo.get(Authentication.Projections.Session, session_id) do
-      Repo.preload(session, [:account])
+      Repo.preload(session, [:account, :employee, :corpo])
     end
   end
 
   def get_actor_by_session_id(session_id) do
     session_id
     |> get_session()
-    |> Ordo.Actor.build()
+    |> case do
+      nil ->
+        {:error, :session_not_found}
+
+      %{} = session ->
+        {:ok, Ordo.Actor.build(session)}
+    end
   end
 
   # Actions
@@ -23,6 +29,17 @@ defmodule Ordo.Authentication do
     with {:ok, command} <- Authentication.Commands.CreateSession.build(actor),
          :ok <- Ordo.App.dispatch(command, consistency: :strong) do
       {:ok, command.session_id}
+    end
+  end
+
+  @spec set_active_corpo_id(String.t(), String.t()) :: :ok
+  def set_active_corpo_id(session_id, corpo_id) do
+    with {:ok, command} <-
+           Authentication.Commands.SetSessionCorpo.build(%{
+             session_id: session_id,
+             corpo_id: corpo_id
+           }) do
+      Ordo.App.dispatch(command, consistency: :strong)
     end
   end
 

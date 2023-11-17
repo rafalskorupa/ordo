@@ -91,6 +91,13 @@ defmodule OrdoWeb.ActorAuth do
         session["actor_token"]
         |> decode_token()
         |> Authentication.get_actor_by_session_id()
+        |> case do
+          {:ok, actor} ->
+            actor
+
+          {:error, _} ->
+            %Ordo.Actor{}
+        end
       end
     end)
   end
@@ -176,14 +183,19 @@ defmodule OrdoWeb.ActorAuth do
   def fetch_current_actor(conn, _opts) do
     {session_id, conn} = ensure_actor_token(conn)
 
-    actor =
-      if session_id do
-        Authentication.get_actor_by_session_id(session_id)
-      else
-        %Ordo.Actor{}
-      end
+    with session_id when is_binary(session_id) <- session_id,
+         {:ok, actor} <- Authentication.get_actor_by_session_id(session_id) do
+      assign(conn, :actor, actor)
+    else
+      _ ->
+        assign(conn, :actor, %Ordo.Actor{})
+    end
+  end
 
-    assign(conn, :actor, actor)
+  def get_session_id(conn) do
+    conn
+    |> get_session(:actor_token)
+    |> decode_token()
   end
 
   defp ensure_actor_token(conn) do

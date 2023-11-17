@@ -1,0 +1,32 @@
+<%= if @live_action == :new || @corpos == [] do %>
+  <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+    Create an Organisation
+  </h2>
+  <.simple_form
+    for={@form}
+    id="create_corpo"
+    class="mt-8 space-y-6"
+    phx-submit="save"
+    phx-change="validate"
+  >
+    <.input field={@form[:name]} type="text" label="Name" required />
+
+    <:actions>
+      <.button
+        phx-disable-with="Creating organisation..."
+        class="w-full px-5 py-3 text-base font-medium text-center text-white bg-primary-700 rounded-lg hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 sm:w-auto dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+      >
+        Create an organisation
+      </.button>
+    </:actions>
+  </.simple_form>
+<% else %>
+  <.table id="corpos" rows={@corpos}>
+    <:col :let={corpo} label="Corpo"><%= corpo.name %></:col>
+    <:action :let={corpo}>
+      <.link href={~p"/auth/set_corpo/#{corpo.id}"} >
+        Login
+      </.link>
+    </:action>
+  </.table>
+<% end %>

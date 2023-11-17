@@ -25,18 +25,32 @@ defmodule OrdoWeb.Router do
     scope "/auth", Authentication do
       delete "/log_out", SessionController, :delete
     end
+  end
+
+  scope "/", OrdoWeb do
+    pipe_through [:browser, :require_authenticated_actor]
 
     scope "/auth", Authentication do
-      pipe_through([:redirect_if_actor_is_authenticated])
-
-      live_session :redirect_if_actor_is_authenticated,
-        on_mount: [{OrdoWeb.ActorAuth, :redirect_if_actor_is_authenticated}] do
-        live "/register", RegisterLive, :new
-        live "/sign_in", SignInLive, :new
+      live_session :require_authenticated_actor,
+        on_mount: [{OrdoWeb.ActorAuth, :ensure_authenticated}] do
+        live "/corpos", CorposLive, :index
+        live "/corpos/new", CorposLive, :new
       end
 
-      post "/log_in", SessionController, :create
+      get "/set_corpo/:corpo_id", SessionController, :update
     end
+  end
+
+  scope "/auth", OrdoWeb.Authentication do
+    pipe_through([:browser, :redirect_if_actor_is_authenticated])
+
+    live_session :redirect_if_actor_is_authenticated,
+      on_mount: [{OrdoWeb.ActorAuth, :redirect_if_actor_is_authenticated}] do
+      live "/register", RegisterLive, :new
+      live "/sign_in", SignInLive, :new
+    end
+
+    post "/log_in", SessionController, :create
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

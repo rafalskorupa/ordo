@@ -1,5 +1,5 @@
 defmodule Ordo.Authentication.Aggregates.Account do
-  defstruct [:account_id]
+  defstruct [:account_id, corpo_ids: []]
 
   alias Ordo.Authentication.Aggregates.Account
 

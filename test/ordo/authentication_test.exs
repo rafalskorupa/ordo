@@ -16,7 +16,22 @@ defmodule Ordo.AuthenticationTest do
       %{account: %{id: account_id}, actor: actor} = create_account()
 
       assert {:ok, session_id} = Authentication.create_session(actor)
-      assert %{id: ^session_id, account_id: ^account_id} = Repo.get(Session, session_id)
+
+      assert %{id: ^session_id, account_id: ^account_id, corpo_id: nil, employee_id: nil} =
+               Repo.get(Session, session_id)
+    end
+
+    test "it creates session for actor with company" do
+      %{account: %{id: account_id}, actor: actor} = create_account()
+      {:ok, corpo} = Ordo.Corpos.create_corpo(actor, %{name: "Name"})
+      actor = %Ordo.Actor{actor | corpo: corpo}
+
+      assert {:ok, session_id} = Authentication.create_session(actor)
+      assert %Session{} = session = Repo.get(Session, session_id)
+
+      assert session.account_id == account_id
+      assert session.corpo_id == corpo.id
+      assert session.employee_id
     end
 
     test "it returns invalid_account_id error" do
@@ -24,6 +39,72 @@ defmodule Ordo.AuthenticationTest do
 
       assert {:error, :invalid_account_id} =
                Authentication.create_session(%Ordo.Actor{account: %{id: account_id}})
+    end
+  end
+
+  describe "get_session/1" do
+    test "it returns session" do
+      %{account: %{id: account_id}, actor: actor} = create_account()
+      {:ok, session_id} = Authentication.create_session(actor)
+      {:ok, %{id: corpo_id}} = Ordo.Corpos.create_corpo(actor, %{name: "Name"})
+
+      assert %{account_id: ^account_id, corpo_id: nil} = Authentication.get_session(session_id)
+
+      :ok = Authentication.set_active_corpo_id(session_id, corpo_id)
+
+      assert %{account_id: ^account_id, corpo_id: ^corpo_id} =
+               Authentication.get_session(session_id)
+    end
+
+    test "it returns nil if session doesn't exist" do
+      refute Authentication.get_session(Ecto.UUID.generate())
+    end
+  end
+
+  describe "get_actor_by_session_id/1" do
+    test "it returns actor" do
+      %{account: %{id: account_id}, actor: actor} = create_account()
+      {:ok, session_id} = Authentication.create_session(actor)
+      {:ok, %{id: corpo_id}} = Ordo.Corpos.create_corpo(actor, %{name: "Name"})
+
+      assert {:ok, %Ordo.Actor{account: %{id: ^account_id}, corpo: nil}} =
+               Authentication.get_actor_by_session_id(session_id)
+
+      :ok = Authentication.set_active_corpo_id(session_id, corpo_id)
+
+      assert {:ok, %Ordo.Actor{account: %{id: ^account_id}, corpo: %{id: ^corpo_id}}} =
+               Authentication.get_actor_by_session_id(session_id)
+    end
+
+    test "it returns error if session doesn't exist" do
+      assert {:error, :session_not_found} ==
+               Authentication.get_actor_by_session_id(Ecto.UUID.generate())
+    end
+  end
+
+  describe "set_active_corpo_id/2" do
+    test "it updates session with corpo_id" do
+      %{account: %{id: account_id}, actor: actor} = create_account()
+      {:ok, session_id} = Authentication.create_session(actor)
+      {:ok, %{id: corpo_id}} = Ordo.Corpos.create_corpo(actor, %{name: "Name"})
+
+      assert :ok = Authentication.set_active_corpo_id(session_id, corpo_id)
+      assert %{account_id: ^account_id, corpo_id: ^corpo_id} = Repo.get!(Session, session_id)
+    end
+
+    test "it doesn't update session if account doesn't have access to corpo" do
+      %{actor: actor} = create_account()
+      {:ok, session_id} = Authentication.create_session(actor)
+
+      corpo_id = Ecto.UUID.generate()
+
+      assert {:error, :invalid_corpo_id} =
+               Authentication.set_active_corpo_id(session_id, corpo_id)
+    end
+
+    test "it doesn't update session if session doesn't exist" do
+      assert {:error, :session_invalid} =
+               Authentication.set_active_corpo_id(Ecto.UUID.generate(), Ecto.UUID.generate())
     end
   end
 

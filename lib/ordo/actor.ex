@@ -1,27 +1,32 @@
 defmodule Ordo.Actor do
-  @derive Jason.Encoder
-  defstruct [:account]
+  defstruct [:account, :corpo, :employee]
 
   @type t :: %__MODULE__{
-          account: %{id: String.t(), email: String.t()} | nil
+          account: %{id: String.t(), email: String.t()} | nil,
+          corpo: %{id: String.t()} | nil,
+          employee: %{id: String.t()} | nil
         }
 
   def authenticated?(%__MODULE__{account: %{}}), do: true
   def authenticated?(_), do: false
 
+  def corpo_id(%__MODULE__{corpo: nil}), do: nil
+  def corpo_id(%__MODULE__{corpo: %{id: corpo_id}}), do: corpo_id
+
+  # TODO: rework that, it doesn't make sense
   def build(nil) do
     %__MODULE__{}
   end
 
+  def build(%{account: account, employee: employee, corpo: corpo}) do
+    %__MODULE__{account: account, employee: employee, corpo: corpo}
+  end
+
+  def build(%{account: account, corpo: corpo}) do
+    %__MODULE__{account: account, corpo: corpo}
+  end
+
   def build(%{account: account}) do
     %__MODULE__{account: account}
-  end
-
-  def serialize(%__MODULE__{account: nil}) do
-    %{account_id: nil}
-  end
-
-  def serialize(%__MODULE__{account: %{id: account_id}}) do
-    %{account_id: account_id}
   end
 end
