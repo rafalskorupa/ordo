@@ -65,7 +65,7 @@ defmodule OrdoWeb.People.EmployeeLive.Index do
                 class="hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <td
-                  :for={{col, i} <- Enum.with_index(@col)}
+                  :for={{col, i_} <- Enum.with_index(@col)}
                   phx-click={@row_click && @row_click.(row)}
                   class={[
                     "p-4 text-base font-medium text-gray-900 whitespace-nowrap dark:text-white",
