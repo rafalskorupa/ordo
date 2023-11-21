@@ -79,14 +79,10 @@ defmodule OrdoWeb.ActorAuth do
     socket = mount_current_user(socket, session)
     actor = socket.assigns.actor
 
-    Ordo.People.Projections.Employee
-    |> Ordo.Repo.get_by(account_id: actor.account.id, corpo_id: corpo_id)
+    actor
+    |> Authentication.get_corpo_actor(corpo_id)
     |> case do
-      %{} = employee ->
-        employee = Ordo.Repo.preload(employee, :corpo)
-
-        actor = Ordo.Actor.set_corpo(actor, employee)
-
+      {:ok, actor} ->
         socket =
           socket
           |> Phoenix.Component.assign(:actor, actor)
@@ -94,7 +90,7 @@ defmodule OrdoWeb.ActorAuth do
 
         {:cont, socket}
 
-      nil ->
+      {:error, :no_access_to_corpo} ->
         socket =
           socket
           |> Phoenix.LiveView.put_flash(:error, "You don't have access to this page")

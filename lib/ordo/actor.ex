@@ -32,15 +32,18 @@ defmodule Ordo.Actor do
   end
 
   def build(%{account: account, employee: employee, corpo: corpo}) do
-    %__MODULE__{account: account, employee: employee, corpo: corpo}
-  end
-
-  def build(%{account: account, corpo: corpo}) do
-    %__MODULE__{account: account, corpo: corpo, employee: nil}
+    %__MODULE__{
+      account_id: account.id,
+      account: account,
+      employee_id: employee.id,
+      employee: employee,
+      corpo_id: corpo.id,
+      corpo: corpo
+    }
   end
 
   def build(%{account: account}) do
-    %__MODULE__{account: account, corpo: nil, employee: nil}
+    %__MODULE__{account_id: account.id, account: account, corpo: nil, employee: nil}
   end
 
   def serialize(%__MODULE__{} = actor) do

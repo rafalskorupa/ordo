@@ -10,6 +10,7 @@ defmodule Ordo.Authentication do
     end
   end
 
+
   def get_actor_by_session_id(session_id) do
     session_id
     |> get_session()
@@ -19,6 +20,21 @@ defmodule Ordo.Authentication do
 
       %{} = session ->
         {:ok, Ordo.Actor.build(session)}
+    end
+  end
+
+  @spec get_corpo_actor(Ordo.Actor.t(), String.t()) :: {:ok, Ordo.Actor.t()} | {:error, :no_access_to_corpo}
+  def get_corpo_actor(actor, corpo_id) do
+    Authentication.Projections.Employee
+    |> Ordo.Repo.get_by(%{account_id: actor.account.id, corpo_id: corpo_id})
+    |> case do
+      %Authentication.Projections.Employee{} = employee ->
+        employee = Repo.preload(employee, :corpo)
+
+        {:ok, Ordo.Actor.set_corpo(actor, employee)}
+
+      nil ->
+        {:error, :no_access_to_corpo}
     end
   end
 

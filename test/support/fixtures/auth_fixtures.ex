@@ -43,11 +43,9 @@ defmodule Ordo.AuthFixtures do
         create_corpo(%{actor: actor})
       end
 
-    employee = Ordo.People.get_actor_employee!(actor, corpo.id)
+    {:ok, actor} = Ordo.Authentication.get_corpo_actor(actor, corpo.id)
 
-    actor = Ordo.Actor.set_corpo(actor, employee)
-
-    %{account: account, actor: actor, employee: employee, corpo: corpo}
+    %{account: account, actor: actor, corpo: corpo}
   end
 
   def create_corpo(attrs \\ %{}) do

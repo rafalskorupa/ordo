@@ -57,6 +57,19 @@ defmodule Ordo.AuthenticationTest do
     end
   end
 
+  describe "get_corpo_actor/2" do
+    test "it returns corpo actor" do
+      %{account: account, corpo: corpo} = create_corpo_account()
+
+      actor = Ordo.Actor.build(%{account: account})
+
+      assert {:ok, actor} = Authentication.get_corpo_actor(actor, corpo.id)
+      assert actor.account.id == account.id
+      assert actor.corpo.id == corpo.id
+      assert actor.employee
+    end
+  end
+
   describe "verify_session/1" do
     test "it returns :ok if session is valid" do
       %{actor: actor} = create_account()
