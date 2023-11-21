@@ -125,7 +125,7 @@ defmodule OrdoWeb.ActorAuth do
             actor
 
           {:error, _} ->
-            %Ordo.Actor{}
+            Ordo.Actor.build(nil)
         end
       end
     end)
