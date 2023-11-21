@@ -1,5 +1,12 @@
 defmodule Ordo.Actor do
-  defstruct [:account, :corpo, :employee]
+  use Ecto.Schema
+  #   import Ecto.Changeset
+
+  embedded_schema do
+    belongs_to(:account, Ordo.Authentication.Projections.Account)
+    belongs_to(:employee, Ordo.People.Projections.Employee)
+    belongs_to(:corpo, Ordo.Corpos.Projections.Corpo)
+  end
 
   @type t :: %__MODULE__{
           account: %{id: String.t(), email: String.t()} | nil,
@@ -21,7 +28,7 @@ defmodule Ordo.Actor do
 
   # TODO: rework that, it doesn't make sense
   def build(nil) do
-    %__MODULE__{}
+    %__MODULE__{account: nil, employee: nil, corpo: nil}
   end
 
   def build(%{account: account, employee: employee, corpo: corpo}) do
@@ -29,10 +36,18 @@ defmodule Ordo.Actor do
   end
 
   def build(%{account: account, corpo: corpo}) do
-    %__MODULE__{account: account, corpo: corpo}
+    %__MODULE__{account: account, corpo: corpo, employee: nil}
   end
 
   def build(%{account: account}) do
-    %__MODULE__{account: account}
+    %__MODULE__{account: account, corpo: nil, employee: nil}
+  end
+
+  def serialize(%__MODULE__{} = actor) do
+    %{
+      account_id: actor.account.id,
+      corpo_id: actor.corpo.id,
+      employee_id: actor.employee.id
+    }
   end
 end

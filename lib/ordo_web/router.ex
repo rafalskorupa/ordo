@@ -17,14 +17,23 @@ defmodule OrdoWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/app/:corpo_id", OrdoWeb.App do
+  scope "/app/:corpo_id", OrdoWeb do
     pipe_through [:browser]
 
     live_session :ensure_corpo_actor,
       on_mount: [
         {OrdoWeb.ActorAuth, :ensure_corpo_actor}
       ] do
-      live "/", DashboardLive, :index
+      live "/", App.DashboardLive, :index
+
+      scope "/people", People do
+        live "/", EmployeeLive.Index, :index
+        live "/new", EmployeeLive.Index, :new
+        live "/:id/edit", EmployeeLive.Index, :edit
+
+        live "/:id", EmployeeLive.Show, :show
+        live "/:id/show/edit", EmployeeLive.Show, :edit
+      end
     end
   end
 

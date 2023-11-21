@@ -16,8 +16,6 @@ defmodule Ordo.People.Projections.Employee do
 
   @doc false
   def changeset(employee, attrs) do
-    employee
-    |> cast(attrs, [:first_name, :last_name])
-    |> validate_required([:first_name, :last_name])
+    cast(employee, attrs, [:first_name, :last_name])
   end
 end

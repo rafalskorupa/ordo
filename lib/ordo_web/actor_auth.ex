@@ -77,11 +77,10 @@ defmodule OrdoWeb.ActorAuth do
 
   def on_mount(:ensure_corpo_actor, %{"corpo_id" => corpo_id}, session, socket) do
     socket = mount_current_user(socket, session)
-    actor = socket.assigns.actor |> IO.inspect()
+    actor = socket.assigns.actor
 
     Ordo.People.Projections.Employee
     |> Ordo.Repo.get_by(account_id: actor.account.id, corpo_id: corpo_id)
-    |> IO.inspect()
     |> case do
       %{} = employee ->
         employee = Ordo.Repo.preload(employee, :corpo)
@@ -218,7 +217,7 @@ defmodule OrdoWeb.ActorAuth do
       assign(conn, :actor, actor)
     else
       _ ->
-        assign(conn, :actor, %Ordo.Actor{})
+        assign(conn, :actor, Ordo.Actor.build(nil))
     end
   end
 

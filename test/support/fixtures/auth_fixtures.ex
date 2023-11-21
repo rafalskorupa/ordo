@@ -33,8 +33,51 @@ defmodule Ordo.AuthFixtures do
     %{account: account, actor: actor}
   end
 
+  def create_corpo_account(attrs \\ %{}) do
+    %{account: account, actor: actor} = create_account()
+
+    %{corpo: corpo} =
+      if Map.has_key?(attrs, :corpo) do
+        %{corpo: attrs[:corpo]}
+      else
+        create_corpo(%{actor: actor})
+      end
+
+    employee = Ordo.People.get_actor_employee!(actor, corpo.id)
+
+    actor = Ordo.Actor.set_corpo(actor, employee)
+
+    %{account: account, actor: actor, employee: employee, corpo: corpo}
+  end
+
+  def create_corpo(attrs \\ %{}) do
+    actor =
+      if Map.has_key?(attrs, :actor) do
+        attrs[:actor]
+      else
+        %{actor: actor} = create_account()
+        actor
+      end
+
+    attrs = valid_corpo_attributes(attrs)
+
+    {:ok, corpo} = Ordo.Corpos.create_corpo(actor, attrs)
+
+    %{corpo: corpo}
+  end
+
+  def valid_corpo_attributes(attrs \\ %{}) do
+    attrs
+    |> Map.take([:name])
+    |> Enum.into(%{
+      name: "Arasaka"
+    })
+  end
+
   def valid_account_attributes(attrs \\ %{}) do
-    Enum.into(attrs, %{
+    attrs
+    |> Map.take([:email, :password])
+    |> Enum.into(%{
       email: unique_user_email(),
       password: valid_user_password()
     })
