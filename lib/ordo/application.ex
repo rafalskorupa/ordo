@@ -24,7 +24,8 @@ defmodule Ordo.Application do
       Ordo.Authentication.Projectors.Session,
       Ordo.Corpos.Projectors.Corpo,
       Ordo.People.Projectors.Employee,
-      Ordo.People.Handlers.CreateOwnerEmployee
+      Ordo.People.Handlers.CreateOwnerEmployee,
+      Ordo.Invitations.Projectors.Invitation
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

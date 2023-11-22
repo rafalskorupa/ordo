@@ -8,14 +8,14 @@ defmodule Ordo.People do
     People.Projections.Employee
     |> employee_scope(actor)
     |> Repo.all()
-    |> Repo.preload([:account])
+    |> Repo.preload([:account, :invitations])
   end
 
   def get_employee!(actor, employee_id) do
     People.Projections.Employee
     |> employee_scope(actor)
     |> Repo.get!(employee_id)
-    |> Repo.preload([:account])
+    |> Repo.preload([:account, :invitations])
   end
 
   def create_employee(actor, attrs) do
@@ -27,6 +27,16 @@ defmodule Ordo.People do
 
   def create_employee_changeset(command \\ %People.Commands.CreateEmployee{}, attrs) do
     People.Commands.CreateEmployee.changeset(command, attrs)
+  end
+
+  def invite_employee_by_email(actor, employee, attrs) do
+    with {:ok, command} <- People.Commands.InviteByEmail.build(actor, employee, attrs) do
+      Ordo.App.dispatch(command, consistency: :strong)
+    end
+  end
+
+  def invite_employee_by_email_changeset(command \\ %People.Commands.InviteByEmail{}, attrs) do
+    People.Commands.InviteByEmail.changeset(command, attrs)
   end
 
   def update_employee(actor, employee, attrs) do

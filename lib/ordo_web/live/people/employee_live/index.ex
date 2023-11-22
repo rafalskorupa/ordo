@@ -114,6 +114,14 @@ defmodule OrdoWeb.People.EmployeeLive.Index do
     |> assign(:employee, People.get_employee!(actor, id))
   end
 
+  defp apply_action(socket, :invite, %{"id" => id}) do
+    actor = socket.assigns.actor
+
+    socket
+    |> assign(:page_title, "Invite Employee")
+    |> assign(:employee, People.get_employee!(actor, id))
+  end
+
   defp apply_action(socket, :new, _params) do
     socket
     |> assign(:page_title, "New Employee")
@@ -128,6 +136,10 @@ defmodule OrdoWeb.People.EmployeeLive.Index do
 
   @impl true
   def handle_info({OrdoWeb.People.EmployeeLive.FormComponent, {:saved, employee}}, socket) do
+    {:noreply, stream_insert(socket, :employees, employee)}
+  end
+
+  def handle_info({OrdoWeb.People.EmployeeLive.InvitationComponent, {:invited, employee}}, socket) do
     {:noreply, stream_insert(socket, :employees, employee)}
   end
 

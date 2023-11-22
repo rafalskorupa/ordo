@@ -44,6 +44,8 @@ defmodule OrdoWeb do
 
       import Plug.Conn
       import OrdoWeb.Gettext
+      import OrdoWeb.ViewHelpers
+
 
       unquote(verified_routes())
     end
@@ -89,6 +91,9 @@ defmodule OrdoWeb do
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
+
+      import OrdoWeb.ViewHelpers
+
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())

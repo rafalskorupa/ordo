@@ -1,4 +1,4 @@
-defmodule Ordo.Authentication.Validations do
+defmodule Ordo.Support.Validations do
   import Ecto.Changeset
 
   def validate_email(changeset, field \\ :email) do

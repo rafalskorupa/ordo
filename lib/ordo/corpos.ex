@@ -12,6 +12,13 @@ defmodule Ordo.Corpos do
     |> Repo.all()
   end
 
+  def list_invitations_to_corpo(%Ordo.Actor{account: %{email: email}}) do
+    Ordo.Invitations.Projections.Invitation
+    |> where(email: ^email)
+    |> Repo.all()
+    |> Repo.preload([:corpo])
+  end
+
   # Actions
 
   def create_corpo(actor, attrs) do

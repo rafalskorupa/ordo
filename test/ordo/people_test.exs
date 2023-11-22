@@ -30,6 +30,38 @@ defmodule Ordo.PeopleTest do
     end
   end
 
+  describe "invite_employee_by_email/3" do
+    setup do
+      create_corpo_account()
+    end
+
+    test "it creates mail invitation for given employee", %{actor: actor} do
+      email = "joe.doe@skorupa.io"
+
+      {:ok, employee} =
+        People.create_employee(actor, %{first_name: "Yorinobu", last_name: "Arasaka"})
+
+      assert :ok = People.invite_employee_by_email(actor, employee, %{email: email})
+
+      assert invitation = Repo.get_by!(Invitations.Projections.Invitation, email: email)
+      assert invitation.corpo_id == actor.corpo.id
+      assert invitation.employee_id == employee.id
+      assert invitation.email == email
+    end
+
+    test "it doesn't mail invitation for invalid email", %{actor: actor} do
+      {:ok, employee} =
+        People.create_employee(actor, %{first_name: "Yorinobu", last_name: "Arasaka"})
+
+      assert {:error, changeset} =
+               People.invite_employee_by_email(actor, employee, %{email: "invalid email"})
+
+      assert errors_on(changeset) == %{
+               email: ["must have the @ sign and no spaces"]
+             }
+    end
+  end
+
   describe "update_employee/2" do
     setup do
       create_corpo_account()

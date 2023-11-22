@@ -1,4 +1,4 @@
-<%= if @live_action == :new || @corpos == [] do %>
+<%= if @live_action == :new do %>
   <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
     Create an Organisation
   </h2>
@@ -33,4 +33,13 @@
   <.link patch={~p"/auth/corpos/new"}>
     Create new Corpo
   </.link>
+
+  <.table id="invitations" rows={@invitations}>
+    <:col :let={invitation} label="Corpo"><%= invitation.corpo.name %></:col>
+    <:action :let={invitation}>
+      <.link href={~p"/auth/invitations/#{invitation.id}"}>
+        Join
+      </.link>
+    </:action>
+  </.table>
 <% end %>

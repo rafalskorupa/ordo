@@ -30,6 +30,7 @@ defmodule OrdoWeb.Router do
         live "/", EmployeeLive.Index, :index
         live "/new", EmployeeLive.Index, :new
         live "/:id/edit", EmployeeLive.Index, :edit
+        live "/:id/invite", EmployeeLive.Index, :invite
 
         live "/:id", EmployeeLive.Show, :show
         live "/:id/show/edit", EmployeeLive.Show, :edit
@@ -56,6 +57,7 @@ defmodule OrdoWeb.Router do
         on_mount: [{OrdoWeb.ActorAuth, :ensure_authenticated}] do
         live "/corpos/new", CorposLive, :new
         live "/corpos", CorposLive, :index
+        live "/invitations/:invitation_id", ConfirmInvitationLive, :show
       end
     end
   end

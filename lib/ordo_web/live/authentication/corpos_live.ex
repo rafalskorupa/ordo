@@ -2,15 +2,18 @@ defmodule OrdoWeb.Authentication.CorposLive do
   use OrdoWeb, :live_view
 
   alias Ordo.Corpos
+  alias Ordo.Invitations
 
   @impl true
   def mount(_parmas, _session, socket) do
     actor = socket.assigns.actor
 
     changeset = Corpos.create_corpo_changeset(%{})
-    corpos = Corpos.list_corpos(actor)
 
-    socket = socket |> assign(corpos: corpos) |> assign_form(changeset)
+    corpos = Corpos.list_corpos(actor)
+    invitations = Invitations.list_invitations(actor)
+
+    socket = socket |> assign(corpos: corpos, invitations: invitations) |> assign_form(changeset)
 
     {:ok, socket, layout: {OrdoWeb.Layouts, :auth}}
   end
@@ -23,6 +26,11 @@ defmodule OrdoWeb.Authentication.CorposLive do
     else
       assign(socket, form: form)
     end
+  end
+
+  @impl true
+  def handle_params(_, _, socket) do
+    {:noreply, socket}
   end
 
   @impl true

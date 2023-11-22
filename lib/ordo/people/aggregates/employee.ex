@@ -10,6 +10,7 @@ defmodule Ordo.People.Aggregates.Employee do
   alias Ordo.People.Commands.CreateOwner
   alias Ordo.People.Commands.UpdateEmployee
   alias Ordo.People.Commands.DeleteEmployee
+  alias Ordo.People.Commands.LinkEmployee
 
   alias Ordo.People.Events.EmployeeCreated
   alias Ordo.People.Events.EmployeeInfoChanged
@@ -64,6 +65,16 @@ defmodule Ordo.People.Aggregates.Employee do
         actor: Ordo.Actor.serialize(actor)
       })
     end
+  end
+
+  def execute(
+        %Employee{} = aggregate,
+        %LinkEmployee{account_id: account_id, actor: actor}
+      ) do
+    aggregate
+    |> Multi.new()
+    |> Multi.execute(&employee_exists?/1)
+    |> Multi.execute(&link_account(&1, account_id, actor))
   end
 
   def execute(%Employee{} = aggregate, %CreateEmployee{} = command) do

@@ -1,92 +1,14 @@
-defmodule Ordo.People.Commands.InviteByEmail do
-  use Ecto.Schema
-  import Ecto.Changeset
+defmodule Ordo.Invitations.Aggregates.Invitation do
+  defstruct [:invitation_id, :corpo_id, :employee_id, :email, :account_id, :inviter]
 
-  embedded_schema do
-    field(:invitation_id, :binary_id)
-    field(:corpo_id, :binary_id)
-    field(:employee_id, :binary_id)
-
-    embeds_one(:actor, Ordo.Actor)
-  end
-
-  def build(actor, attrs) do
-    %__MODULE__{invitation_id: Ecto.UUID.generate(), actor: actor}
-    |> change(%{corpo_id: actor.corpo.id})
-    |> validate_required([:invitation_id, :corpo_id])
-    |> apply_action!(:validate!)
-    |> changeset(attrs)
-    |> apply_action(:build)
-  end
-
-  def changeset(%__MODULE__{} = command, attrs) do
-    command
-    |> cast(attrs, [:employee_id])
-    |> validate_required([:employee_id])
-  end
-
-  def validate!(command) do
-    command
-    |> changeset(%{})
-    |> validate_required([:invitation_id, :corpo_id])
-    |> apply_action!(:validate!)
-  end
-end
-
-defmodule Ordo.People.Commands.AcceptInvitation do
-  use Ecto.Schema
-  import Ecto.Changeset
-
-  embedded_schema do
-    field(:invitation_id, :binary_id)
-
-    embeds_one(:actor, Ordo.Actor)
-  end
-
-  def build(%{corpo: nil, employee: nil} = actor, attrs) do
-    %__MODULE__{invitation_id: Ecto.UUID.generate(), actor: actor}
-    |> validate_required([:invitation_id])
-    |> apply_action!(:validate!)
-    |> changeset(attrs)
-    |> apply_action(:build)
-  end
-
-  def changeset(%__MODULE__{} = command, attrs) do
-    command
-    |> cast(attrs, [:employee_id])
-    |> validate_required([:employee_id])
-  end
-
-  def validate!(command) do
-    command
-    |> changeset(%{})
-    |> validate_required([:invitation_id])
-    |> apply_action!(:validate!)
-  end
-end
-
-defmodule Ordo.People.Events.InvitationCreated do
-  @derive Jason.Encoder
-  defstruct [:invitation_id, :corpo_id, :employee_id, :email, :actor]
-end
-
-defmodule Ordo.People.Events.InvitationAccepted do
-  @derive Jason.Encoder
-  defstruct [:invitation_id, :corpo_id, :account_id]
-end
-
-defmodule Ordo.Poeple.Aggregates.Invitation do
-  defstruct [:invitation_id, :corpo_id, :employee_id, :email, :account_id]
-
-  alias Ordo.People.Aggregates.Invitation
+  alias Ordo.Invitations.Aggregates.Invitation
   alias Ordo.People.Commands.InviteByEmail
-  alias Ordo.People.Commands.AcceptInvitation
+  alias Ordo.Invitations.Commands.AcceptInvitation
 
-  alias Ordo.People.Events.InvitationCreated
-  alias Ordo.People.Events.InvitationAccepted
+  alias Ordo.Invitations.Events.InvitationCreated
+  alias Ordo.Invitations.Events.InvitationAccepted
 
-
-  def execute(%__MODULE__{invitation_id: nil}, %InviteByEmail{} = command) do
+  def execute(%Invitation{invitation_id: nil}, %InviteByEmail{} = command) do
     InviteByEmail.validate!(command)
 
     %InvitationCreated{
@@ -98,7 +20,38 @@ defmodule Ordo.Poeple.Aggregates.Invitation do
     }
   end
 
-  def apply(%__MODULE__{} = invitation, %InvitationCreated{} = ev) do
-    %__MODULE__{invitation_id: ev.invitation_id, email: ev.email, corpo_id: ev.corpo_id, employee_id: ev.employee_id}
+  def execute(
+        %Invitation{email: email, inviter: inviter} = invitation,
+        %AcceptInvitation{actor: %{account: %{email: email}}} = command
+      ) do
+    :ok =
+      Ordo.App.dispatch(%Ordo.People.Commands.LinkEmployee{
+        employee_id: invitation.employee_id,
+        corpo_id: invitation.corpo_id,
+        account_id: command.actor.account_id,
+        actor: inviter
+      })
+
+    %InvitationAccepted{
+      invitation_id: invitation.invitation_id,
+      corpo_id: invitation.corpo_id,
+      employee_id: invitation.employee_id,
+      account_id: command.actor.account.id,
+      actor: Ordo.Actor.serialize(command.actor)
+    }
+  end
+
+  def apply(%Invitation{}, %InvitationCreated{} = ev) do
+    %__MODULE__{
+      invitation_id: ev.invitation_id,
+      email: ev.email,
+      corpo_id: ev.corpo_id,
+      employee_id: ev.employee_id,
+      inviter: Ordo.Actor.deserialize(ev.actor)
+    }
+  end
+
+  def apply(%Invitation{} = invitation, %InvitationAccepted{account_id: account_id}) do
+    %__MODULE__{invitation | account_id: account_id}
   end
 end

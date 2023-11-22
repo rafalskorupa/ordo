@@ -1,7 +1,7 @@
 defmodule Ordo.Authentication.Commands.UpdatePassword do
   use Ecto.Schema
   import Ecto.Changeset
-  import Ordo.Authentication.Validations
+  import Ordo.Support.Validations
 
   embedded_schema do
     field(:account_id, :binary_id)

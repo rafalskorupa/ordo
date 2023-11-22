@@ -23,9 +23,6 @@ defmodule Ordo.Actor do
 
   def has_corpo?(%__MODULE__{corpo: corpo}), do: !!corpo
 
-  def corpo_id(%__MODULE__{corpo: nil}), do: nil
-  def corpo_id(%__MODULE__{corpo: %{id: corpo_id}}), do: corpo_id
-
   # TODO: rework that, it doesn't make sense
   def build(nil) do
     %__MODULE__{account: nil, employee: nil, corpo: nil}
@@ -46,11 +43,43 @@ defmodule Ordo.Actor do
     %__MODULE__{account_id: account.id, account: account, corpo: nil, employee: nil}
   end
 
+  def deserialize(%{account_id: account_id, corpo_id: corpo_id, employee_id: employee_id}) do
+    %Ordo.Actor{
+      account: %{id: account_id},
+      corpo: %{id: corpo_id},
+      employee: %{id: employee_id}
+    }
+  end
+
   def serialize(%__MODULE__{} = actor) do
     %{
-      account_id: actor.account.id,
-      corpo_id: actor.corpo.id,
-      employee_id: actor.employee.id
+      account_id: account_id(actor),
+      corpo_id: corpo_id(actor),
+      employee_id: employee_id(actor)
     }
+  end
+
+  def account_id(%{account: %{id: account_id}}) do
+    account_id
+  end
+
+  def account_id(_) do
+    nil
+  end
+
+  def corpo_id(%{corpo: %{id: corpo_id}}) do
+    corpo_id
+  end
+
+  def corpo_id(_) do
+    nil
+  end
+
+  def employee_id(%{employee: %{id: employee_id}}) do
+    employee_id
+  end
+
+  def employee_id(_) do
+    nil
   end
 end

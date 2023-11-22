@@ -212,15 +212,21 @@
     rows={@streams.employees}
     row_click={fn {_id, employee} -> JS.navigate(~p"/app/#{@corpo.id}/people/#{employee}") end}
   >
-    <:col :let={{_id, employee}} label="First name"><%= employee.first_name %></:col>
-    <:col :let={{_id, employee}} label="Last name"><%= employee.last_name %></:col>
-    <:col :let={{_id, employee}} label="Account email">
-      <%= if employee.account, do: employee.account.email %>
+    <:col :let={{_id, employee}} label="Name"><%= employee_name(employee) %></:col>
+    <:col :let={{_id, employee}} label="Email">
+      <%= employee_email(employee) %>
+    </:col>
+    <:col :let={{_id, employee}} label="User">
+      <%= employee_status(employee) %>
     </:col>
     <:action :let={{_id, employee}}>
       <div class="sr-only">
         <.link navigate={~p"/app/#{@corpo.id}/people/#{employee}"}>Show</.link>
       </div>
+      
+      <%= if !employee_has_account?(employee) do %>
+        <.link patch={~p"/app/#{@corpo.id}/people/#{employee}/invite"}>Invite</.link>
+      <% end %>
       <.link patch={~p"/app/#{@corpo.id}/people/#{employee}/edit"}>Edit</.link>
     </:action>
     <:action :let={{id, employee}}>
@@ -243,6 +249,23 @@
   <.live_component
     module={OrdoWeb.EmployeeLive.FormComponent}
     id={@employee.id || :new}
+    title={@page_title}
+    action={@live_action}
+    actor={@actor}
+    employee={@employee}
+    patch={~p"/app/#{@corpo.id}/people"}
+  />
+</.modal>
+
+<.modal
+  :if={@live_action in [:invite]}
+  id="employee-modal"
+  show
+  on_cancel={JS.patch(~p"/app/#{@corpo.id}/people")}
+>
+  <.live_component
+    module={OrdoWeb.EmployeeLive.InvitationComponent}
+    id={@employee.id}
     title={@page_title}
     action={@live_action}
     actor={@actor}

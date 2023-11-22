@@ -1,7 +1,7 @@
 defmodule Ordo.Authentication.Commands.Register do
   use Ecto.Schema
   import Ecto.Changeset
-  import Ordo.Authentication.Validations
+  import Ordo.Support.Validations
 
   @type t :: %__MODULE__{
           account_id: String.t(),

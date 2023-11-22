@@ -10,6 +10,7 @@ defmodule Ordo.People.Projections.Employee do
 
     belongs_to(:corpo, Ordo.Corpos.Projections.Corpo)
     belongs_to(:account, Ordo.Authentication.Projections.Account)
+    has_many(:invitations, Ordo.Invitations.Projections.Invitation)
 
     timestamps(type: :utc_datetime)
   end
