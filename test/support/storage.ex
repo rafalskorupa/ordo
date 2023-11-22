@@ -30,7 +30,8 @@ defmodule Ordo.Storage do
       auth_accounts,
       auth_sessions,
       employees,
-      corpos
+      corpos,
+      invitations
     RESTART IDENTITY
     CASCADE;
     """
