@@ -67,6 +67,7 @@ defmodule Ordo.People.Aggregates.Employee do
     end
   end
 
+  ## Command Handlers
   def execute(
         %Employee{} = aggregate,
         %LinkEmployee{account_id: account_id, actor: actor}
@@ -125,6 +126,7 @@ defmodule Ordo.People.Aggregates.Employee do
     |> Multi.execute(&delete_employee(&1, actor))
   end
 
+  # State Mutators
   def apply(%Employee{} = employee, %EmployeeCreated{} = ev) do
     %Employee{employee | employee_id: ev.employee_id, corpo_id: ev.corpo_id}
   end
