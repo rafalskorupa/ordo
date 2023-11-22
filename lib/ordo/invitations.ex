@@ -26,4 +26,10 @@ defmodule Ordo.Invitations do
       Ordo.App.dispatch(command, consistency: :strong)
     end
   end
+
+  def cancel_invitation(actor, invitation) do
+    with {:ok, command} <- Ordo.Invitations.Commands.CancelInvitation.build(actor, invitation) do
+      Ordo.App.dispatch(command, consistency: :strong)
+    end
+  end
 end
