@@ -223,7 +223,7 @@
       <div class="sr-only">
         <.link navigate={~p"/app/#{@corpo.id}/people/#{employee}"}>Show</.link>
       </div>
-      
+
       <%= if !employee_has_account?(employee) do %>
         <.link patch={~p"/app/#{@corpo.id}/people/#{employee}/invite"}>Invite</.link>
       <% end %>

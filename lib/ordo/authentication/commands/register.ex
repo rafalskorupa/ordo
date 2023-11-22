@@ -3,11 +3,7 @@ defmodule Ordo.Authentication.Commands.Register do
   import Ecto.Changeset
   import Ordo.Support.Validations
 
-  @type t :: %__MODULE__{
-          account_id: String.t(),
-          email: String.t(),
-          password: String.t()
-        }
+  @type t :: %__MODULE__{}
 
   embedded_schema do
     field(:account_id, :binary_id)
@@ -28,6 +24,7 @@ defmodule Ordo.Authentication.Commands.Register do
     |> apply_action!(:validate!)
   end
 
+  @spec changeset(t(), map()) :: Ecto.Changeset.t()
   def changeset(%__MODULE__{} = command, attrs) do
     params = downcase_email(attrs)
 

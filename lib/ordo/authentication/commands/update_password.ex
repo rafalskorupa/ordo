@@ -3,6 +3,8 @@ defmodule Ordo.Authentication.Commands.UpdatePassword do
   import Ecto.Changeset
   import Ordo.Support.Validations
 
+  @type t :: %{}
+
   embedded_schema do
     field(:account_id, :binary_id)
     field(:email, :string)

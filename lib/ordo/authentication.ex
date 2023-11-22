@@ -60,7 +60,7 @@ defmodule Ordo.Authentication do
   end
 
   @spec sign_in(map()) ::
-          {:ok, String.t()} | {:error, :invalid_credentials} | {:error, Ecto.Changeset.t()}
+          {:ok, Ordo.Actor.t()} | {:error, :invalid_credentials} | {:error, Ecto.Changeset.t()}
   def sign_in(params) do
     with {:ok, command} <-
            Authentication.Commands.SignIn.build(params),

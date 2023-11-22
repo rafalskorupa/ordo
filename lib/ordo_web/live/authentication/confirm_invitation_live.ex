@@ -29,7 +29,9 @@ defmodule OrdoWeb.Authentication.ConfirmInvitationLive do
     case Invitations.accept_invitation(actor, invitation) do
       :ok ->
         {:noreply,
-         socket |> put_flash(:info, "Invitation Accepted") |> redirect(to: ~p"/app/#{invitation.corpo.id}")}
+         socket
+         |> put_flash(:info, "Invitation Accepted")
+         |> redirect(to: ~p"/app/#{invitation.corpo.id}")}
 
       _ ->
         {:noreply,

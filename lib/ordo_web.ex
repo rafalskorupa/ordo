@@ -46,7 +46,6 @@ defmodule OrdoWeb do
       import OrdoWeb.Gettext
       import OrdoWeb.ViewHelpers
 
-
       unquote(verified_routes())
     end
   end
@@ -93,7 +92,6 @@ defmodule OrdoWeb do
       alias Phoenix.LiveView.JS
 
       import OrdoWeb.ViewHelpers
-
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())
