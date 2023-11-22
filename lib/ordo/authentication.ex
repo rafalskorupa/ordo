@@ -10,7 +10,6 @@ defmodule Ordo.Authentication do
     end
   end
 
-
   def get_actor_by_session_id(session_id) do
     session_id
     |> get_session()
@@ -23,7 +22,8 @@ defmodule Ordo.Authentication do
     end
   end
 
-  @spec get_corpo_actor(Ordo.Actor.t(), String.t()) :: {:ok, Ordo.Actor.t()} | {:error, :no_access_to_corpo}
+  @spec get_corpo_actor(Ordo.Actor.t(), String.t()) ::
+          {:ok, Ordo.Actor.t()} | {:error, :no_access_to_corpo}
   def get_corpo_actor(actor, corpo_id) do
     Authentication.Projections.Employee
     |> Ordo.Repo.get_by(%{account_id: actor.account.id, corpo_id: corpo_id})
@@ -59,7 +59,8 @@ defmodule Ordo.Authentication do
     end
   end
 
-  @spec sign_in(map()) :: {:ok, String.t()} | {:error, :invalid_credentials}
+  @spec sign_in(map()) ::
+          {:ok, String.t()} | {:error, :invalid_credentials} | {:error, Ecto.Changeset.t()}
   def sign_in(params) do
     with {:ok, command} <-
            Authentication.Commands.SignIn.build(params),

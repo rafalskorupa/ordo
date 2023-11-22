@@ -4,6 +4,9 @@ defmodule Ordo.Authentication.Projections.Employee do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "employees" do
+    field(:first_name)
+    field(:last_name)
+
     belongs_to(:corpo, Ordo.Authentication.Projections.Corpo)
     belongs_to(:account, Ordo.Authentication.Projections.Account)
 

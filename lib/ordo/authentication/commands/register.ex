@@ -3,6 +3,12 @@ defmodule Ordo.Authentication.Commands.Register do
   import Ecto.Changeset
   import Ordo.Authentication.Validations
 
+  @type t :: %__MODULE__{
+          account_id: String.t(),
+          email: String.t(),
+          password: String.t()
+        }
+
   embedded_schema do
     field(:account_id, :binary_id)
 
