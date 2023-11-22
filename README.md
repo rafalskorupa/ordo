@@ -2,6 +2,8 @@
 
 Ordo App is sandbox app built on top Commanded ecosystem.
 
+## Context explanation
+
 ### Ordo.Actor
 
 One module that defines "Actor" through the Application. All queries and commands should use this as a first argument.
@@ -44,6 +46,11 @@ Features:
 
 
 ## Known Issues 
+
+* Web layer is not tested
+* Fixtures have to be refactored, still figuring out the way to do it
+* Multiple invitations can be created for one email address - it might be a feature, but I see it as a bug
+
 ## Setup
 
 ```
