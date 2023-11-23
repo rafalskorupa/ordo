@@ -55,8 +55,8 @@ defmodule OrdoWeb.ConnCase do
   test context.
   """
   def register_and_log_in_user(%{conn: conn}) do
-    user = Ordo.UsersFixtures.user_fixture()
-    %{conn: log_in_user(conn, user), user: user}
+    %{actor: actor} = Ordo.AuthFixtures.create_account()
+    %{conn: log_in_actor(conn, actor), actor: actor}
   end
 
   @doc """
@@ -64,8 +64,8 @@ defmodule OrdoWeb.ConnCase do
 
   It returns an updated `conn`.
   """
-  def log_in_user(conn, user) do
-    token = Ordo.Users.generate_user_session_token(user)
+  def log_in_actor(conn, actor) do
+    {:ok, token} = Ordo.Authentication.create_session(actor)
 
     conn
     |> Phoenix.ConnTest.init_test_session(%{})

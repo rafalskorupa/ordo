@@ -4,6 +4,7 @@ defmodule Ordo.PeopleTest do
   import Ordo.AuthFixtures
 
   alias Ordo.People
+  alias Ordo.Invitations
 
   describe "create_employee/2" do
     setup do

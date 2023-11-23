@@ -1,10 +1,5 @@
 defmodule Ordo.PeopleFixtures do
-  alias Ordo.Repo
-
   alias Ordo.People
-
-  alias Ordo.People.Projections.Employee
-
 
   def create_employee(%{actor: actor}, attrs) do
     attrs = valid_employee_attributes(attrs)

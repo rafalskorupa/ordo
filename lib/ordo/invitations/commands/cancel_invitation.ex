@@ -1,4 +1,4 @@
-defmodule Ordo.Invitations.Commands.AcceptInvitation do
+defmodule Ordo.Invitations.Commands.CancelInvitation do
   use Ecto.Schema
   import Ecto.Changeset
 

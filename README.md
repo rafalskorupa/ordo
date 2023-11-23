@@ -44,6 +44,13 @@ Features:
 * List Invitations for current Account (based on matching `email`)
 * Accept Invitation
 
+### Ordo.Nasa
+
+Calculates fuel required for a Space Trip
+
+Solves a problem with recursively calculating values based on formulas.
+
+#TODO(rsko): Describe formulas and problem
 
 ## Known Issues 
 

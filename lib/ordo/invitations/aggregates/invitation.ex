@@ -9,6 +9,7 @@ defmodule Ordo.Invitations.Aggregates.Invitation do
 
   alias Ordo.Invitations.Events.InvitationCreated
   alias Ordo.Invitations.Events.InvitationAccepted
+  alias Ordo.Invitations.Events.InvitationCancelled
 
   def execute(%Invitation{invitation_id: nil}, %InviteByEmail{} = command) do
     InviteByEmail.validate!(command)
@@ -43,15 +44,14 @@ defmodule Ordo.Invitations.Aggregates.Invitation do
     }
   end
 
-
   def execute(
-    %Invitation{active: true, corpo_id: corpo_id} = invitation,
-    %CancelInvitation{actor: %{corpo: %{id: corpo_id}}} = command
-  ) do
+        %Invitation{active: true, corpo_id: corpo_id} = invitation,
+        %CancelInvitation{actor: %{corpo: %{id: corpo_id}}} = command
+      ) do
     %InvitationCancelled{
-      invitation_id: invitation.id,
+      invitation_id: invitation.invitation_id,
       corpo_id: invitation.corpo_id,
-      actor: Ordo.Actor.serialize(actor)
+      actor: Ordo.Actor.serialize(command.actor)
     }
   end
 
