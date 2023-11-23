@@ -1,0 +1,32 @@
+<.header>
+  List <%= @list.id %>
+  <:subtitle>This is a list record from your database.</:subtitle>
+  <:actions>
+    <.link patch={~p"/app/#{@corpo.id}/task_lists/#{@list}/show/edit"} phx-click={JS.push_focus()}>
+      <.button>Edit list</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @list.name %></:item>
+</.list>
+
+<.back navigate={~p"/app/#{@corpo.id}/task_lists"}>Back to task_lists</.back>
+
+<.modal
+  :if={@live_action == :edit}
+  id="list-modal"
+  show
+  on_cancel={JS.patch(~p"/app/#{@corpo.id}/task_lists/#{@list}")}
+>
+  <.live_component
+    module={OrdoWeb.ListLive.FormComponent}
+    id={@list.id}
+    title={@page_title}
+    action={@live_action}
+    actor={@actor}
+    list={@list}
+    patch={~p"/app/#{@corpo.id}/task_lists/#{@list}"}
+  />
+</.modal>

@@ -35,6 +35,13 @@ defmodule OrdoWeb.Router do
         live "/:id", EmployeeLive.Show, :show
         live "/:id/show/edit", EmployeeLive.Show, :edit
       end
+
+      live "/task_lists", ListLive.Index, :index
+      live "/task_lists/new", ListLive.Index, :new
+      live "/task_lists/:id/edit", ListLive.Index, :edit
+
+      live "/task_lists/:id", ListLive.Show, :show
+      live "/task_lists/:id/show/edit", ListLive.Show, :edit
     end
   end
 
