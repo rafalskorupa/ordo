@@ -5,6 +5,13 @@ defmodule OrdoWeb.ViewHelpers do
 
   def employee_name(_), do: ""
 
+  def employee_name!(employee) do
+    case employee_name(employee) do
+      " " -> "Unnamed Employee"
+      name -> name
+    end
+  end
+
   def employee_email(%{account: %{email: email}}), do: email
   def employee_email(%{invitations: [%{email: email} | _]}), do: email
   def employee_email(_), do: nil

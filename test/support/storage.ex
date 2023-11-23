@@ -32,7 +32,8 @@ defmodule Ordo.Storage do
       employees,
       corpos,
       invitations,
-      task_lists
+      task_lists,
+      task_tasks
     RESTART IDENTITY
     CASCADE;
     """

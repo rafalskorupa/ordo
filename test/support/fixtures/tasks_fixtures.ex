@@ -14,4 +14,13 @@ defmodule Ordo.TasksFixtures do
 
     list
   end
+
+  def task_fixture(actor, attrs \\ %{}) do
+    list = Map.get_lazy(attrs, :list, fn -> list_fixture(actor) end)
+    attrs = Enum.into(Map.drop(attrs, [:list]), %{name: "Task Name", list_id: list.id})
+
+    {:ok, task} = Ordo.Tasks.create_task(actor, attrs)
+
+    task
+  end
 end

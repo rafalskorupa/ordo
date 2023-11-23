@@ -8,7 +8,43 @@ defmodule Ordo.Tasks do
 
   alias Ordo.Tasks
 
+  alias Ordo.Tasks.Projections.Task
+
   alias Ordo.Tasks.Projections.List
+
+  def get_task!(actor, id) do
+    Tasks.Projections.Task
+    |> actor_scope(actor)
+    |> Repo.get!(id)
+  end
+
+  def list_tasks(actor, list_id) do
+    Tasks.Projections.Task
+    |> actor_scope(actor)
+    |> where(list_id: ^list_id)
+    |> Repo.all()
+  end
+
+  def create_task(actor, attrs) do
+    with {:ok, command} <- Tasks.Commands.CreateTask.build(actor, attrs),
+         :ok <- Ordo.App.dispatch(command, consistency: :strong) do
+      {:ok, get_task!(actor, command.task_id)}
+    end
+  end
+
+  def complete_task(actor, %Task{} = task) do
+    with {:ok, command} <- Tasks.Commands.CompleteTask.build(actor, task),
+         :ok <- Ordo.App.dispatch(command, consistency: :strong) do
+      {:ok, get_task!(actor, command.task_id)}
+    end
+  end
+
+  def archive_task(actor, %Task{} = task) do
+    with {:ok, command} <- Tasks.Commands.ArchiveTask.build(actor, task),
+         :ok <- Ordo.App.dispatch(command, consistency: :strong) do
+      {:ok, get_task!(actor, command.task_id)}
+    end
+  end
 
   @doc """
   Returns the list of task_lists.
@@ -43,6 +79,11 @@ defmodule Ordo.Tasks do
     List
     |> actor_scope(actor)
     |> Repo.get!(id)
+  end
+
+  def list_exists!(actor, %{list_id: list_id}) do
+    %Tasks.Commands.VerifyList{list_id: list_id, actor: actor}
+    |> Ordo.App.dispatch()
   end
 
   @doc """

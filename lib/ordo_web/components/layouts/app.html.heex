@@ -1142,7 +1142,13 @@
   >
     <main class="p-4">
       <.flash_group flash={@flash} />
-      <%= @inner_content %>
+      <div class="p-4 bg-white block sm:flex items-center justify-between border-b border-gray-200 lg:mt-1.5 dark:bg-gray-800 dark:border-gray-700">
+        <div class="w-full mb-1">
+          <div class="mb-4">
+            <%= @inner_content %>
+          </div>
+        </div>
+      </div>
     </main>
     <footer class="p-4 my-6 mx-4 bg-white rounded-lg shadow md:flex md:items-center md:justify-between md:p-6 xl:p-8 dark:bg-gray-800">
       <ul class="flex flex-wrap items-center mb-6 space-y-1 md:mb-0">
