@@ -44,9 +44,13 @@ Features:
 * List Invitations for current Account (based on matching `email`)
 * Accept Invitation
 
+### Ordo.Tasks
+
+Module reponsible for managing Todo Lists, Tasks and Boards
+
 ### Ordo.Nasa
 
-Calculates fuel required for a Space Trip
+Calculates fuel required for a Space Trip.
 
 Solves a problem with recursively calculating values based on formulas.
 
@@ -55,7 +59,7 @@ Solves a problem with recursively calculating values based on formulas.
 ## Known Issues 
 
 * Web layer is not tested
-* Fixtures have to be refactored, still figuring out the way to do it
+* Fixtures have to be refactored, still figuring out the way to do it with gracefully handling need for an Actor in every command
 * Multiple invitations can be created for one email address - it might be a feature, but I see it as a bug
 
 ## Setup
