@@ -1,5 +1,10 @@
+<.path_nav home_path={~p"/app/#{@corpo.id}"}>
+  <:item title="Lists" path={~p"/app/#{@corpo.id}/task_lists"} />
+  <:item title={@list.name} path={~p"/app/#{@corpo.id}/task_lists/#{@list.id}"} />
+</.path_nav>
+
 <.header>
-  List <%= @list.id %>
+  <%= @list.name %>
   <:subtitle>This is a list record from your database.</:subtitle>
   <:actions>
     <.link patch={~p"/app/#{@corpo.id}/task_lists/#{@list}/show/edit"} phx-click={JS.push_focus()}>
@@ -8,9 +13,45 @@
   </:actions>
 </.header>
 
-<.list>
-  <:item title="Name"><%= @list.name %></:item>
-</.list>
+<.table id={"list_#{@list.id}_tasks"} rows={@streams.tasks}>
+  <:col :let={{_id, task}} label="Name">
+    <p class={[task.completed && "line-through"]}><%= task.name %></p>
+  </:col>
+  <:col :let={{_id, task}} label="Completed"><%= task.completed %></:col>
+  <:col :let={{_id, task}} label="Archived"><%= task.archived %></:col>
+  <:action :let={{id, task}}>
+    <%= if !task.completed do %>
+      <.link
+        phx-click={JS.push("complete", value: %{task_id: task.id})}
+        data-confirm="Are you sure?"
+      >
+        Complete
+      </.link>
+    <% end %>
+    <%= if !task.archived do %>
+      <.link
+        phx-click={JS.push("archive", value: %{task_id: task.id})}
+        data-confirm="Are you sure?"
+      >
+        Archive
+      </.link>
+    <% end %>
+  </:action>
+</.table>
+
+<.form for={@add_task_form} id="add-task-form" phx-submit="add_task">
+  <.input
+    type="text"
+    field={@add_task_form[:name]}
+    required
+    class="shadow appearance-none border rounded w-full py-2 px-3 mr-4 text-grey-darker"
+    placeholder="Add Todo"
+  />
+  <.input type="hidden" field={@add_task_form[:list_id]} />
+  <button class="flex-no-shrink p-2 border-2 rounded text-teal border-teal hover:text-white hover:bg-teal">
+    Add
+  </button>
+</.form>
 
 <.back navigate={~p"/app/#{@corpo.id}/task_lists"}>Back to task_lists</.back>
 

@@ -1,3 +1,8 @@
+<.path_nav home_path={~p"/app/#{@corpo.id}"}>
+  <:item title="People" path={~p"/app/#{@corpo.id}/people"} />
+  <:item title={employee_name!(@employee)} path={~p"/app/#{@corpo.id}/people/#{@employee.id}"} />
+</.path_nav>
+
 <.header>
   Employee <%= @employee.id %>
   <:subtitle>This is a employee record from your database.</:subtitle>

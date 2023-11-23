@@ -8,6 +8,8 @@ defmodule Ordo.Tasks.Projections.List do
     field :name, :string
     belongs_to(:corpo, Ordo.Corpos.Projections.Corpo)
 
+    has_many(:tasks, Ordo.Tasks.Projections.Task)
+
     timestamps(type: :utc_datetime)
   end
 
