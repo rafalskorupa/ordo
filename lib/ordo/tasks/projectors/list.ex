@@ -39,7 +39,7 @@ defmodule Ordo.Tasks.Projectors.List do
     fn multi ->
       query = where(List, id: ^list_id)
 
-      Ecto.Multi.delete_all(multi, :delete_list, query)
+      Ecto.Multi.update_all(multi, :update_deleted, query, set: [soft_deleted: true])
     end
   )
 end

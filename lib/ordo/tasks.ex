@@ -57,6 +57,7 @@ defmodule Ordo.Tasks do
   """
   def list_task_lists(actor) do
     List
+    |> where(soft_deleted: false)
     |> actor_scope(actor)
     |> Repo.all()
   end
@@ -77,6 +78,7 @@ defmodule Ordo.Tasks do
   """
   def get_list!(actor, id) do
     List
+    |> where(soft_deleted: false)
     |> actor_scope(actor)
     |> Repo.get!(id)
   end

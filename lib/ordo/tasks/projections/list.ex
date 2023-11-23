@@ -6,6 +6,7 @@ defmodule Ordo.Tasks.Projections.List do
   @foreign_key_type :binary_id
   schema "task_lists" do
     field :name, :string
+    field :soft_deleted, :boolean
     belongs_to(:corpo, Ordo.Corpos.Projections.Corpo)
 
     has_many(:tasks, Ordo.Tasks.Projections.Task)
