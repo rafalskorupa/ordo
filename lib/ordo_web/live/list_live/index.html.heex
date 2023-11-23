@@ -1,0 +1,47 @@
+<.header>
+  Listing Task lists
+  <:actions>
+    <.link patch={~p"/app/#{@corpo.id}/task_lists/new"}>
+      <.button>New List</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="task_lists"
+  rows={@streams.task_lists}
+  row_click={fn {_id, list} -> JS.navigate(~p"/app/#{@corpo.id}/task_lists/#{list}") end}
+>
+  <:col :let={{_id, list}} label="Name"><%= list.name %></:col>
+  <:action :let={{_id, list}}>
+    <div class="sr-only">
+      <.link navigate={~p"/app/#{@corpo.id}/task_lists/#{list}"}>Show</.link>
+    </div>
+    <.link patch={~p"/app/#{@corpo.id}/task_lists/#{list}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, list}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: list.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal
+  :if={@live_action in [:new, :edit]}
+  id="list-modal"
+  show
+  on_cancel={JS.patch(~p"/app/#{@corpo.id}/task_lists")}
+>
+  <.live_component
+    module={OrdoWeb.ListLive.FormComponent}
+    id={@list.id || :new}
+    title={@page_title}
+    action={@live_action}
+    actor={@actor}
+    list={@list}
+    patch={~p"/app/#{@corpo.id}/task_lists"}
+  />
+</.modal>

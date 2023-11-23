@@ -4,7 +4,6 @@ defmodule Ordo.Nasa.FuelTest do
   alias Ordo.Nasa
   doctest Ordo.Nasa.Fuel
 
-
   describe "calculate_fuel_required/1" do
     test "it returns fuel required for given naval program" do
       program = %Nasa.Program{

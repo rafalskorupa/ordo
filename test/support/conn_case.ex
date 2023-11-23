@@ -59,6 +59,12 @@ defmodule OrdoWeb.ConnCase do
     %{conn: log_in_actor(conn, actor), actor: actor}
   end
 
+  def register_and_log_in_corpo_actor(%{conn: conn}) do
+    %{actor: actor, corpo: corpo} = Ordo.AuthFixtures.create_corpo_account()
+
+    %{conn: log_in_actor(conn, actor), actor: actor, corpo: corpo}
+  end
+
   @doc """
   Logs the given `user` into the `conn`.
 
@@ -69,6 +75,6 @@ defmodule OrdoWeb.ConnCase do
 
     conn
     |> Phoenix.ConnTest.init_test_session(%{})
-    |> Plug.Conn.put_session(:user_token, token)
+    |> Plug.Conn.put_session(:actor_token, OrdoWeb.ActorAuth.encode_token(token))
   end
 end

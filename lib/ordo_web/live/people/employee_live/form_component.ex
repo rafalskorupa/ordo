@@ -37,7 +37,6 @@ defmodule OrdoWeb.EmployeeLive.FormComponent do
       else
         People.update_employee_changeset(employee, %{})
       end
-      |> IO.inspect()
 
     {:ok,
      socket
