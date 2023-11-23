@@ -29,7 +29,7 @@
       <% end %>
       <.link patch={~p"/app/#{@corpo.id}/people/#{employee}/edit"}>Edit</.link>
     </:action>
-    <:action :let={{_id, employee}}>
+    <:action :let={{id, employee}}>
       <.link
         phx-click={JS.push("delete", value: %{id: employee.id}) |> hide("##{id}")}
         data-confirm="Are you sure?"

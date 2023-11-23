@@ -19,7 +19,7 @@
   </:col>
   <:col :let={{_id, task}} label="Completed"><%= task.completed %></:col>
   <:col :let={{_id, task}} label="Archived"><%= task.archived %></:col>
-  <:action :let={{id, task}}>
+  <:action :let={{_id, task}}>
     <%= if !task.completed do %>
       <.link
         phx-click={JS.push("complete", value: %{task_id: task.id})}
