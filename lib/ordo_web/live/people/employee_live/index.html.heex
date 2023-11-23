@@ -4,10 +4,17 @@
 
 <.header>
   People of <%= @corpo.name %>
+    <:actions>
+    <.link patch={~p"/app/#{@corpo.id}/people/new"}>
+      <.button>New Person</.button>
+    </.link>
+  </:actions>
 </.header>
 
+<br>
+
 <div class="flex flex-col">
-  <.styled_table
+  <.table
     id="employees"
     rows={@streams.employees}
     row_click={fn {_id, employee} -> JS.navigate(~p"/app/#{@corpo.id}/people/#{employee}") end}
@@ -37,7 +44,7 @@
         Delete
       </.link>
     </:action>
-  </.styled_table>
+  </.table>
 </div>
 
 <.modal

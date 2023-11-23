@@ -138,15 +138,21 @@
 </header>
 <main class="px-4 py-20 sm:px-6 lg:px-8">
   <div class="mx-auto max-w-2xl">
-    <.flash_group flash={@flash} /> 
+    <.flash_group flash={@flash} />
 
     <.header>Hello!</.header>
 
     <%= if Ordo.Actor.authenticated?(@actor) do %>
-      <p> Nothing to see here yet, <.link navigate={~p"/auth/corpos"} class="text-purple-700 hover:underline dark:text-purple-500">select Corpo</.link> to enter the app!</p>
-
-
+      <p>
+        Nothing to see here yet,
+        <.link
+          navigate={~p"/auth/corpos"}
+          class="text-purple-700 hover:underline dark:text-purple-500"
+        >
+          select Corpo
+        </.link>
+        to enter the app!
+      </p>
     <% end %>
-
   </div>
 </main>

@@ -21,7 +21,7 @@ defmodule Ordo.People do
   def create_employee(actor, attrs) do
     with {:ok, command} <- People.Commands.CreateEmployee.build(actor, attrs),
          :ok <- Ordo.App.dispatch(command, consistency: :strong) do
-      {:ok, Repo.get!(People.Projections.Employee, command.employee_id)}
+      {:ok, get_employee!(actor, command.employee_id)}
     end
   end
 
@@ -42,7 +42,7 @@ defmodule Ordo.People do
   def update_employee(actor, employee, attrs) do
     with {:ok, command} <- People.Commands.UpdateEmployee.build(actor, employee, attrs),
          :ok <- Ordo.App.dispatch(command, consistency: :strong) do
-      {:ok, Repo.get!(People.Projections.Employee, command.employee_id)}
+      {:ok, get_employee!(actor, command.employee_id)}
     end
   end
 
