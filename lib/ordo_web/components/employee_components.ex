@@ -26,6 +26,18 @@ defmodule OrdoWeb.EmployeeComponents do
   import OrdoWeb.ViewHelpers
   import OrdoWeb.CoreComponents
 
+  attr :employee, :any, required: true
+
+  def employee_image(assigns) do
+    ~H"""
+    <div class="relative inline-flex bg-violet-300 hover:border-2 hover:border-solid hover:border-gray-400 items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+      <span class="font-medium text-gray-600 dark:text-gray-300">
+        <%= employee_initials(@employee) %>
+      </span>
+    </div>
+    """
+  end
+
   attr :id, :string, required: true
   attr :employee, :any, required: true
   attr :tooltip, :boolean, default: false
@@ -36,26 +48,23 @@ defmodule OrdoWeb.EmployeeComponents do
     <div class="relative mr-1">
       <.link
         navigate={~p"/app/#{@employee.corpo_id}/people/#{@employee.id}"}
-        class="relative inline-flex bg-violet-300 hover:border-2 hover:border-solid hover:border-gray-400 items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600"
         data-tooltip-target={"employee-avatar-#{@id}-#{@employee.id}"}
       >
-        <span class="font-medium text-gray-600 dark:text-gray-300">
-          <%= employee_initials(@employee) %>
-        </span>
+        <.employee_image employee={@employee} />
       </.link>
 
-      <%= render_slot(@action) %>
+      <%= if @action, do: render_slot(@action) %>
     </div>
     <%= if @tooltip do %>
-    <div
-      id={"employee-avatar-#{@id}-#{@employee.id}"}
-      role="tooltip"
-      class="absolute z-10 invisible  inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
-    >
-      <%= employee_name!(@employee) %>
+      <div
+        id={"employee-avatar-#{@id}-#{@employee.id}"}
+        role="tooltip"
+        class="absolute z-10 invisible  inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
+      >
+        <%= employee_name!(@employee) %>
 
-      <div class="tooltip-arrow" data-popper-arrow></div>
-    </div>
+        <div class="tooltip-arrow" data-popper-arrow></div>
+      </div>
     <% end %>
     """
   end
@@ -77,8 +86,8 @@ defmodule OrdoWeb.EmployeeComponents do
   end
 
   attr :id, :string, required: true
-  attr :on_click, JS, required: true
-  attr :tooltip, :string
+  attr :on_click, JS, default: nil
+  attr :tooltip, :string, default: nil
 
   def empty_avatar_action(assigns) do
     ~H"""

@@ -19,7 +19,9 @@
     rows={@streams.employees}
     row_click={fn {_id, employee} -> JS.navigate(~p"/app/#{@corpo.id}/people/#{employee}") end}
   >
-    <:col :let={{_id, employee}}><.employee_avatar id={"#{employee.id}"} employee={employee} /></:col>
+    <:col :let={{_id, employee}}>
+      <.employee_avatar id={"#{employee.id}"} employee={employee} />
+    </:col>
     <:col :let={{_id, employee}} label="Name"><%= employee_name(employee) %></:col>
     <:col :let={{_id, employee}} label="Email">
       <%= employee_email(employee) %>

@@ -1,6 +1,7 @@
 defmodule OrdoWeb.ListLive.Show do
   use OrdoWeb, :live_view
 
+  alias Ordo.People
   alias Ordo.Tasks
 
   @impl true
@@ -16,6 +17,7 @@ defmodule OrdoWeb.ListLive.Show do
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
      |> assign(:list, Tasks.get_list!(socket.assigns.actor, id))
+     |> assign(:employees, People.list_employees(socket.assigns.actor))
      |> assign_add_task_form(changeset)
      |> stream(:tasks, Tasks.list_tasks(socket.assigns.actor, id))}
   end
@@ -55,11 +57,11 @@ defmodule OrdoWeb.ListLive.Show do
     end
   end
 
-  def handle_event("assign_yourself", %{"task_id" => task_id}, socket) do
+  def handle_event("assign", %{"task_id" => task_id, "employee_id" => employee_id}, socket) do
     task = Tasks.get_task!(socket.assigns.actor, task_id)
 
     case Tasks.assign_to_task(socket.assigns.actor, task, %{
-           employee_id: socket.assigns.actor.employee.id
+           employee_id: employee_id
          }) do
       {:ok, task} ->
         {:noreply, stream_insert(socket, :tasks, task)}
@@ -86,5 +88,12 @@ defmodule OrdoWeb.ListLive.Show do
 
   defp assign_add_task_form(socket, %Ecto.Changeset{} = changeset) do
     assign(socket, :add_task_form, to_form(changeset, as: :create_task))
+  end
+
+  def unassigned_employees(task, employees) do
+    employees
+    |> Enum.reject(fn employee ->
+      Enum.find(task.assigned_employees, fn e -> e.id == employee.id end)
+    end)
   end
 end

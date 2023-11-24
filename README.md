@@ -48,6 +48,8 @@ Features:
 
 Module reponsible for managing Todo Lists, Tasks and Boards
 
+#TODO(rsko): When adding assignee to a task new "Add assignee" button doesn't display dropdown - rewrite to separate component
+
 ### Ordo.Nasa
 
 Calculates fuel required for a Space Trip.

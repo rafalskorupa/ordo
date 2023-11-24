@@ -30,7 +30,7 @@
   <:col :let={{_id, task}} label="Name">
     <p class={[task.completed && "line-through"]}><%= task.name %></p>
   </:col>
-  <:col :let={{id, task}} label="Assignees">
+  <:col :let={{_id, task}} label="Assignees">
     <div class="flex">
       <%= for assignee <- task.assigned_employees do %>
         <.employee_avatar
@@ -43,7 +43,6 @@
               on_click={JS.push("deassign", value: %{task_id: task.id, employee_id: assignee.id})}
               data_confirm={"Deassign #{employee_name(assignee)} from task?"}
             >
-              <span class="sr-only">Close menu</span>
               <!-- Heroicon name: outline/x -->
               <svg
                 class="h-2 w-2"
@@ -64,12 +63,54 @@
           </:action>
         </.employee_avatar>
       <% end %>
-      <%= if !actor_already_assigned?(@actor, task.assigned_employees) do %>
-        <.empty_avatar_action
-          id={"add-assignee-#{task.id}"}
-          on_click={JS.push("assign_yourself", value: %{task_id: task.id})}
-          tooltip="Assign yourself"
-        />
+      <%= if Enum.count(task.assigned_employees) < 5 do %>
+        <div
+          data-dropdown-toggle={"add-assignee-dropdown-#{task.id}"}
+          data-dropdown-placement="bottom"
+        >
+          <.empty_avatar_action id={"add-assignee-#{task.id}"} />
+        </div>
+        <!-- Dropdown menu -->
+        <div
+          id={"add-assignee-dropdown-#{task.id}"}
+          class="z-10 hidden bg-white rounded-lg shadow w-60 dark:bg-gray-700"
+        >
+          <ul
+            class="max-h-48 py-2 overflow-y-auto text-gray-700 dark:text-gray-200"
+            aria-labelledby={"add-assignee-#{task.id}"}
+          >
+            <%= for employee <- unassigned_employees(task, @employees)  do %>
+              <li>
+                <.link
+                  phx-click={
+                    JS.push("assign", value: %{employee_id: employee.id, task_id: task.id})
+                  }
+                  class="flex items-center px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  <.employee_image employee={employee} />
+                  <span class="ml-4"><%= employee_name!(employee) %></span>
+                </.link>
+              </li>
+            <% end %>
+          </ul>
+          <%= if false do %>
+            <a
+              href="#"
+              class="flex items-center p-3 text-sm font-medium text-blue-600 border-t border-gray-200 rounded-b-lg bg-gray-50 dark:border-gray-600 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-blue-500 hover:underline"
+            >
+              <svg
+                class="w-4 h-4 me-2"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="currentColor"
+                viewBox="0 0 20 18"
+              >
+                <path d="M6.5 9a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9ZM8 10H5a5.006 5.006 0 0 0-5 5v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a5.006 5.006 0 0 0-5-5Zm11-3h-2V5a1 1 0 0 0-2 0v2h-2a1 1 0 1 0 0 2h2v2a1 1 0 0 0 2 0V9h2a1 1 0 1 0 0-2Z" />
+              </svg>
+              Add new user
+            </a>
+          <% end %>
+        </div>
       <% end %>
     </div>
   </:col>
