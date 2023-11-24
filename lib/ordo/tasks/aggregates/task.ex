@@ -1,6 +1,5 @@
 defmodule Ordo.Tasks.Aggregates.Task do
   defstruct [:task_id, :corpo_id, :list_id, :name, :archived, :completed, :assignees]
-  @assignees_limit 5
 
   alias Commanded.Aggregate.Multi
 

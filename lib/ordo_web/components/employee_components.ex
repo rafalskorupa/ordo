@@ -22,9 +22,9 @@ defmodule OrdoWeb.EmployeeComponents do
     statics: OrdoWeb.static_paths()
 
   alias Phoenix.LiveView.JS
-  import OrdoWeb.Gettext
+  # import OrdoWeb.Gettext
   import OrdoWeb.ViewHelpers
-  import OrdoWeb.CoreComponents
+  # import OrdoWeb.CoreComponents
 
   attr :employee, :any, required: true
 
