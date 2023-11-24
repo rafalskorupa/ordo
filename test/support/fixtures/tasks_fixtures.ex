@@ -15,6 +15,10 @@ defmodule Ordo.TasksFixtures do
     list
   end
 
+  def create_task(%{actor: actor}) do
+    %{task: task_fixture(actor)}
+  end
+
   def task_fixture(actor, attrs \\ %{}) do
     list = Map.get_lazy(attrs, :list, fn -> list_fixture(actor) end)
     attrs = Enum.into(Map.drop(attrs, [:list]), %{name: "Task Name", list_id: list.id})
@@ -22,5 +26,14 @@ defmodule Ordo.TasksFixtures do
     {:ok, task} = Ordo.Tasks.create_task(actor, attrs)
 
     task
+  end
+
+  def task_assignee_fixture(%{actor: actor, task: task}, attrs \\ %{}) do
+    %{employee: employee} = Ordo.PeopleFixtures.create_employee(%{actor: actor}, attrs)
+
+    {:ok, task} = Ordo.Tasks.assign_to_task(actor, task, %{employee_id: employee.id})
+    assignee = Enum.find(task.assignees, fn assignee -> assignee.employee_id == employee.id end)
+
+    %{employee: employee, assignee: assignee}
   end
 end

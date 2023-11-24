@@ -86,6 +86,7 @@ defmodule OrdoWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import OrdoWeb.CoreComponents
+      import OrdoWeb.EmployeeComponents
       import OrdoWeb.Gettext
 
       # Shortcut for generating JS commands

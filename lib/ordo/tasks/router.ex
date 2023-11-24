@@ -16,7 +16,9 @@ defmodule Ordo.Tasks.Router do
     [
       Ordo.Tasks.Commands.CreateTask,
       Ordo.Tasks.Commands.ArchiveTask,
-      Ordo.Tasks.Commands.CompleteTask
+      Ordo.Tasks.Commands.CompleteTask,
+      Ordo.Tasks.Commands.AssignToTask,
+      Ordo.Tasks.Commands.DeassignFromTask
     ],
     to: Ordo.Tasks.Aggregates.Task,
     identity: :task_id

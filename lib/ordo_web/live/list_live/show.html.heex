@@ -13,32 +13,6 @@
   </:actions>
 </.header>
 
-<.table id={"list_#{@list.id}_tasks"} rows={@streams.tasks}>
-  <:col :let={{_id, task}} label="Name">
-    <p class={[task.completed && "line-through"]}><%= task.name %></p>
-  </:col>
-  <:col :let={{_id, task}} label="Completed"><%= task.completed %></:col>
-  <:col :let={{_id, task}} label="Archived"><%= task.archived %></:col>
-  <:action :let={{_id, task}}>
-    <%= if !task.completed do %>
-      <.link
-        phx-click={JS.push("complete", value: %{task_id: task.id})}
-        data-confirm="Are you sure?"
-      >
-        Complete
-      </.link>
-    <% end %>
-    <%= if !task.archived do %>
-      <.link
-        phx-click={JS.push("archive", value: %{task_id: task.id})}
-        data-confirm="Are you sure?"
-      >
-        Archive
-      </.link>
-    <% end %>
-  </:action>
-</.table>
-
 <.form for={@add_task_form} id="add-task-form" phx-submit="add_task">
   <.input
     type="text"
@@ -52,6 +26,86 @@
     Add
   </button>
 </.form>
+<.table id={"list_#{@list.id}_tasks"} rows={@streams.tasks}>
+  <:col :let={{_id, task}} label="Name">
+    <p class={[task.completed && "line-through"]}><%= task.name %></p>
+  </:col>
+  <:col :let={{id, task}} label="Assignees">
+    <div class="flex">
+      <%= for assignee <- task.assigned_employees do %>
+        <.employee_avatar
+          id={"assignee-task-#{task.id}-employee-#{assignee.id}"}
+          employee={assignee}
+          tooltip={true}
+        >
+          <:action>
+            <.avatar_action
+              on_click={JS.push("deassign", value: %{task_id: task.id, employee_id: assignee.id})}
+              data_confirm={"Deassign #{employee_name(assignee)} from task?"}
+            >
+              <span class="sr-only">Close menu</span>
+              <!-- Heroicon name: outline/x -->
+              <svg
+                class="h-2 w-2"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </.avatar_action>
+          </:action>
+        </.employee_avatar>
+      <% end %>
+      <%= if !actor_already_assigned?(@actor, task.assigned_employees) do %>
+        <.empty_avatar_action
+          id={"add-assignee-#{task.id}"}
+          on_click={JS.push("assign_yourself", value: %{task_id: task.id})}
+          tooltip="Assign yourself"
+        />
+      <% end %>
+    </div>
+  </:col>
+  <:col :let={{_id, task}} label="Status">
+    <%= if task.completed do %>
+      <span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-green-400 border border-green-100 dark:border-green-500">
+        Completed
+      </span>
+    <% else %>
+      <span class="bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded-md dark:bg-gray-700 dark:text-red-400 border border-red-100 dark:border-red-500">
+        To Do
+      </span>
+    <% end %>
+  </:col>
+  <:action :let={{_id, task}}>
+    <%= if !task.completed do %>
+      <.link
+        phx-click={JS.push("complete", value: %{task_id: task.id})}
+        data-confirm="Are you sure?"
+      >
+        Complete
+      </.link>
+    <% end %>
+  </:action>
+
+  <:action :let={{_id, task}}>
+    <%= if !task.archived do %>
+      <.link
+        phx-click={JS.push("archive", value: %{task_id: task.id})}
+        data-confirm="Are you sure?"
+      >
+        Archive
+      </.link>
+    <% end %>
+  </:action>
+</.table>
 
 <.back navigate={~p"/app/#{@corpo.id}/task_lists"}>Back to task_lists</.back>
 
