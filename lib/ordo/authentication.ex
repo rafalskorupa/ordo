@@ -2,6 +2,8 @@ defmodule Ordo.Authentication do
   alias Ordo.Repo
   alias Ordo.Authentication
 
+  import Ecto.Query
+
   # Queries
 
   def get_session(session_id) do
@@ -24,18 +26,22 @@ defmodule Ordo.Authentication do
 
   @spec get_corpo_actor(Ordo.Actor.t(), String.t()) ::
           {:ok, Ordo.Actor.t()} | {:error, :no_access_to_corpo}
-  def get_corpo_actor(actor, corpo_id) do
-    Authentication.Projections.Employee
-    |> Ordo.Repo.get_by(%{account_id: actor.account.id, corpo_id: corpo_id})
-    |> case do
-      %Authentication.Projections.Employee{} = employee ->
-        employee = Repo.preload(employee, :corpo)
-
+  def get_corpo_actor(%Ordo.Actor{account: %{id: account_id}} = actor, corpo_id) do
+    case get_employee(account_id, corpo_id) do
+      %{} = employee ->
         {:ok, Ordo.Actor.set_corpo(actor, employee)}
 
       nil ->
         {:error, :no_access_to_corpo}
     end
+  end
+
+  @spec get_employee(String.t(), String.t()) :: Authentication.Projections.Employee.t() | nil
+  defp get_employee(account_id, corpo_id) do
+    Authentication.Projections.Employee
+    |> where(account_id: ^account_id, corpo_id: ^corpo_id)
+    |> preload([:corpo])
+    |> Repo.one()
   end
 
   # Actions

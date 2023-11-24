@@ -38,7 +38,8 @@ defmodule Ordo.TasksTest do
       assert task.completed
     end
 
-    test "it return task_not_found error if task is archived", %{actor: actor, task: task} = assigns do
+    test "it return task_not_found error if task is archived",
+         %{actor: actor, task: task} = assigns do
       archive_task(assigns)
 
       assert {:error, :task_not_found} = Tasks.complete_task(actor, task)
@@ -59,7 +60,8 @@ defmodule Ordo.TasksTest do
       assert task.archived
     end
 
-    test "it return :task__not_found error if task is already archived", %{actor: actor, task: task} = assigns do
+    test "it return :task__not_found error if task is already archived",
+         %{actor: actor, task: task} = assigns do
       archive_task(assigns)
 
       assert {:error, :task_not_found} = Tasks.archive_task(actor, task)
@@ -131,7 +133,8 @@ defmodule Ordo.TasksTest do
     end
 
     test "returns list_not_found error if list doesn't exists", %{actor: actor} do
-      assert {:error, :list_not_found} == Tasks.verify_list!(actor, %{list_id: Ecto.UUID.generate()})
+      assert {:error, :list_not_found} ==
+               Tasks.verify_list!(actor, %{list_id: Ecto.UUID.generate()})
     end
   end
 
@@ -141,7 +144,6 @@ defmodule Ordo.TasksTest do
     end
 
     alias Ordo.Tasks.Projections.List
-
 
     @invalid_attrs %{name: nil}
 

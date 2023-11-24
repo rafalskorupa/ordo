@@ -4,16 +4,13 @@ defmodule Ordo.Actor do
 
   embedded_schema do
     belongs_to(:account, Ordo.Authentication.Projections.Account)
-    belongs_to(:employee, Ordo.People.Projections.Employee)
+    belongs_to(:employee, Ordo.Authentication.Projections.Employee)
     belongs_to(:corpo, Ordo.Corpos.Projections.Corpo)
   end
 
-  @type t :: %__MODULE__{
-          account: %{id: String.t(), email: String.t()} | nil,
-          corpo: %{id: String.t()} | nil,
-          employee: %{id: String.t()} | nil
-        }
+  @type t :: %__MODULE__{}
 
+  @spec set_corpo(t(), Ordo.Authentication.Projections.Employee.t()) :: t()
   def set_corpo(%__MODULE__{} = actor, %{corpo: %{} = corpo} = employee) do
     %Ordo.Actor{actor | corpo: corpo, employee: employee}
   end

@@ -26,7 +26,7 @@ defmodule OrdoWeb.ActorAuth do
 
   ## `on_mount` arguments
 
-    * `:mount_current_user` - Assigns current_user
+    * `:mount_current_actor` - Assigns current_user
       to socket assigns based on actor_token, or nil if
       there's no actor_token or no matching user.
 
@@ -46,7 +46,7 @@ defmodule OrdoWeb.ActorAuth do
       defmodule OrdoWeb.PageLive do
         use OrdoWeb, :live_view
 
-        on_mount {OrdoWeb.UserAuth, :mount_current_user}
+        on_mount {OrdoWeb.UserAuth, :mount_current_actor}
         ...
       end
 
@@ -57,11 +57,11 @@ defmodule OrdoWeb.ActorAuth do
       end
   """
   def on_mount(:mount_current_actor, _params, session, socket) do
-    {:cont, mount_current_user(socket, session)}
+    {:cont, mount_current_actor(socket, session)}
   end
 
   def on_mount(:ensure_authenticated, _params, session, socket) do
-    socket = mount_current_user(socket, session)
+    socket = mount_current_actor(socket, session)
 
     if Ordo.Actor.authenticated?(socket.assigns.actor) do
       {:cont, socket}
@@ -76,12 +76,9 @@ defmodule OrdoWeb.ActorAuth do
   end
 
   def on_mount(:ensure_corpo_actor, %{"corpo_id" => corpo_id}, session, socket) do
-    socket = mount_current_user(socket, session)
-    actor = socket.assigns.actor
+    socket = mount_current_actor(socket, session)
 
-    actor
-    |> Authentication.get_corpo_actor(corpo_id)
-    |> case do
+    case Authentication.get_corpo_actor(socket.assigns.actor, corpo_id) do
       {:ok, actor} ->
         socket =
           socket
@@ -101,7 +98,7 @@ defmodule OrdoWeb.ActorAuth do
   end
 
   def on_mount(:redirect_if_actor_is_authenticated, _params, session, socket) do
-    socket = mount_current_user(socket, session)
+    socket = mount_current_actor(socket, session)
 
     if Ordo.Actor.authenticated?(socket.assigns.actor) do
       {:halt, Phoenix.LiveView.redirect(socket, to: signed_in_path(socket))}
@@ -110,7 +107,7 @@ defmodule OrdoWeb.ActorAuth do
     end
   end
 
-  defp mount_current_user(socket, session) do
+  defp mount_current_actor(socket, session) do
     Phoenix.Component.assign_new(socket, :actor, fn ->
       if session["actor_token"] do
         session["actor_token"]
