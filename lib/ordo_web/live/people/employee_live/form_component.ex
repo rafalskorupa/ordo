@@ -32,10 +32,10 @@ defmodule OrdoWeb.EmployeeLive.FormComponent do
   @impl true
   def update(%{employee: employee} = assigns, socket) do
     changeset =
-      if !employee.id do
-        People.create_employee_changeset(%{})
-      else
+      if employee.id do
         People.update_employee_changeset(employee, %{})
+      else
+        People.create_employee_changeset(%{})
       end
 
     {:ok,

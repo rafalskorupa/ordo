@@ -7,8 +7,8 @@ defmodule Ordo.Authentication.Projectors.Account do
 
   alias Ordo.Repo
 
-  alias Ordo.Authentication.Projections
   alias Ordo.Authentication.Events
+  alias Ordo.Authentication.Projections
 
   project(%Events.AccountCreated{account_id: account_id}, _metadata, fn multi ->
     Ecto.Multi.insert(multi, :account, %Projections.Account{id: account_id})

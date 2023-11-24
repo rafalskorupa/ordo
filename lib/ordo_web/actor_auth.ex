@@ -109,17 +109,12 @@ defmodule OrdoWeb.ActorAuth do
 
   defp mount_current_actor(socket, session) do
     Phoenix.Component.assign_new(socket, :actor, fn ->
-      if session["actor_token"] do
-        session["actor_token"]
-        |> decode_token()
-        |> Authentication.get_actor_by_session_id()
-        |> case do
-          {:ok, actor} ->
-            actor
-
-          {:error, _} ->
-            Ordo.Actor.build(nil)
-        end
+      with token when is_binary(token) <- session["actor_token"],
+           session_id = decode_token(token),
+           {:ok, actor} <- Authentication.get_actor_by_session_id(session_id) do
+        actor
+      else
+        _ -> Ordo.Actor.build(nil)
       end
     end)
   end

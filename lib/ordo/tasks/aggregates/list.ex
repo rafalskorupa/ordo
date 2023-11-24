@@ -5,14 +5,14 @@ defmodule Ordo.Tasks.Aggregates.List do
 
   alias Ordo.Tasks.Aggregates.List
 
-  alias Ordo.Tasks.Commands.VerifyList
   alias Ordo.Tasks.Commands.CreateList
-  alias Ordo.Tasks.Commands.UpdateList
   alias Ordo.Tasks.Commands.DeleteList
+  alias Ordo.Tasks.Commands.UpdateList
+  alias Ordo.Tasks.Commands.VerifyList
 
   alias Ordo.Tasks.Events.ListCreated
-  alias Ordo.Tasks.Events.ListNameChanged
   alias Ordo.Tasks.Events.ListDeleted
+  alias Ordo.Tasks.Events.ListNameChanged
 
   def verify_list!(%List{corpo_id: corpo_id, deleted: false}, %Ordo.Actor{corpo: %{id: corpo_id}}),
     do: :ok

@@ -20,7 +20,6 @@ defmodule Ordo.Actor do
 
   def has_corpo?(%__MODULE__{corpo: corpo}), do: !!corpo
 
-  # TODO: rework that, it doesn't make sense
   def build(nil) do
     %__MODULE__{account: nil, employee: nil, corpo: nil}
   end

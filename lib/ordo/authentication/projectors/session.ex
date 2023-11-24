@@ -6,6 +6,7 @@ defmodule Ordo.Authentication.Projectors.Session do
     consistency: :strong
 
   alias Ordo.Authentication.Projections.Session
+
   alias Ordo.Authentication.Events.SessionCreated
 
   project(

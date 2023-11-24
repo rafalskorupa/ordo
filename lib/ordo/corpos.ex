@@ -1,6 +1,7 @@
 defmodule Ordo.Corpos do
-  alias Ordo.Repo
   alias Ordo.Corpos
+
+  alias Ordo.Repo
 
   import Ecto.Query
 

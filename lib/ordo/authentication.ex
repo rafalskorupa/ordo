@@ -1,6 +1,7 @@
 defmodule Ordo.Authentication do
-  alias Ordo.Repo
   alias Ordo.Authentication
+
+  alias Ordo.Repo
 
   import Ecto.Query
 

@@ -1,7 +1,6 @@
 defmodule Ordo.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications
-  @moduledoc false
 
   use Application
 
@@ -19,7 +18,6 @@ defmodule Ordo.Application do
       # Start to serve requests, typically the last entry
       OrdoWeb.Endpoint,
       Ordo.App,
-      # TODO: Create separate supervisor for Projectors
       Ordo.Authentication.Projectors.Account,
       Ordo.Authentication.Projectors.Session,
       Ordo.Corpos.Projectors.Corpo,

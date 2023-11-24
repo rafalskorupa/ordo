@@ -8,8 +8,9 @@ defmodule Ordo.Invitations.Projectors.Invitation do
   import Ecto.Query
 
   alias Ordo.Invitations.Projections.Invitation
-  alias Ordo.Invitations.Events.InvitationCreated
+
   alias Ordo.Invitations.Events.InvitationAccepted
+  alias Ordo.Invitations.Events.InvitationCreated
 
   project(
     %InvitationCreated{

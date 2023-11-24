@@ -1,21 +1,20 @@
 defmodule Ordo.People.Aggregates.Employee do
   defstruct [:employee_id, :corpo_id, :account_id, :info, :deleted]
 
-  alias Ordo.People.Commands.DeleteEmployee
   alias Commanded.Aggregate.Multi
 
   alias Ordo.People.Aggregates.Employee
 
   alias Ordo.People.Commands.CreateEmployee
   alias Ordo.People.Commands.CreateOwner
-  alias Ordo.People.Commands.UpdateEmployee
   alias Ordo.People.Commands.DeleteEmployee
   alias Ordo.People.Commands.LinkEmployee
+  alias Ordo.People.Commands.UpdateEmployee
 
-  alias Ordo.People.Events.EmployeeCreated
-  alias Ordo.People.Events.EmployeeInfoChanged
   alias Ordo.People.Events.EmployeeAccountLinked
+  alias Ordo.People.Events.EmployeeCreated
   alias Ordo.People.Events.EmployeeDeleted
+  alias Ordo.People.Events.EmployeeInfoChanged
 
   def employee_exists?(%Employee{} = employee) do
     if employee.employee_id && !employee.deleted do

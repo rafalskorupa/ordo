@@ -6,6 +6,7 @@ defmodule Ordo.Corpos.Projectors.Corpo do
     consistency: :strong
 
   alias Ordo.Corpos.Projections.Corpo
+
   alias Ordo.Corpos.Events.CorpoCreated
 
   project(

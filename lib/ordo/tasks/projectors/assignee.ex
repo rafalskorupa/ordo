@@ -8,6 +8,7 @@ defmodule Ordo.Tasks.Projectors.Assignee do
   import Ecto.Query
 
   alias Ordo.Tasks.Projections.Assignee
+
   alias Ordo.Tasks.Events.EmployeeAssignedToTask
   alias Ordo.Tasks.Events.EmployeeDeassignedFromTask
 

@@ -1,6 +1,11 @@
 defmodule Ordo.People do
-  alias Ordo.Repo
+  @moduledoc """
+  Context for interacting with Employee related data
+  """
+
   alias Ordo.People
+
+  alias Ordo.Repo
 
   import Ecto.Query
 

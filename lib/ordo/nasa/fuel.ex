@@ -1,6 +1,4 @@
 defmodule Ordo.Nasa.Fuel do
-  @moduledoc false
-
   alias Ordo.Nasa.Program
 
   # Those values are separated from method definition - different ships

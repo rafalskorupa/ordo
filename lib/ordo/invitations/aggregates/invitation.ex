@@ -7,9 +7,9 @@ defmodule Ordo.Invitations.Aggregates.Invitation do
   alias Ordo.Invitations.Commands.AcceptInvitation
   alias Ordo.Invitations.Commands.CancelInvitation
 
-  alias Ordo.Invitations.Events.InvitationCreated
   alias Ordo.Invitations.Events.InvitationAccepted
   alias Ordo.Invitations.Events.InvitationCancelled
+  alias Ordo.Invitations.Events.InvitationCreated
 
   def execute(%Invitation{invitation_id: nil}, %InviteByEmail{} = command) do
     InviteByEmail.validate!(command)

@@ -13,8 +13,6 @@ defmodule Ordo.Nasa.Solar do
   """
 
   defmodule Earth do
-    @moduledoc false
-
     def name, do: "Earth"
     def gravity, do: 9.807
 
@@ -23,8 +21,6 @@ defmodule Ordo.Nasa.Solar do
   end
 
   defmodule Mars do
-    @moduledoc false
-
     def name, do: "Mars"
     def gravity, do: 3.711
 
@@ -33,8 +29,6 @@ defmodule Ordo.Nasa.Solar do
   end
 
   defmodule Moon do
-    @moduledoc false
-
     def name, do: "Moon"
     def gravity, do: 1.62
 
@@ -43,8 +37,6 @@ defmodule Ordo.Nasa.Solar do
   end
 
   defmodule Venus do
-    @moduledoc false
-
     def name, do: "Venus"
     def gravity, do: 8.87
 

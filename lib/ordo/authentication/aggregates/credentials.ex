@@ -4,10 +4,10 @@ defmodule Ordo.Authentication.Aggregates.Credentials do
 
   alias Ordo.Authentication.Aggregates.Credentials
 
-  alias Ordo.Authentication.Commands.Register
   alias Ordo.Authentication.Commands.CreateAccount
-  alias Ordo.Authentication.Commands.UpdatePassword
+  alias Ordo.Authentication.Commands.Register
   alias Ordo.Authentication.Commands.SignIn
+  alias Ordo.Authentication.Commands.UpdatePassword
 
   alias Ordo.Authentication.Events.CredentialsCreated
   alias Ordo.Authentication.Events.PasswordChanged

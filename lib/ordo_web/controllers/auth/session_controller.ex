@@ -5,11 +5,12 @@ defmodule OrdoWeb.Authentication.SessionController do
   alias OrdoWeb.ActorAuth
 
   def create(conn, %{"register" => credentials}) do
-    with {:ok, actor} <- Authentication.sign_in(credentials) do
-      conn
-      |> put_flash(:info, "Account created successfully!")
-      |> ActorAuth.log_in_actor(actor, credentials)
-    else
+    case Authentication.sign_in(credentials) do
+      {:ok, actor} ->
+        conn
+        |> put_flash(:info, "Account created successfully!")
+        |> ActorAuth.log_in_actor(actor, credentials)
+
       {:error, :invalid_credentials} ->
         conn
         |> put_flash(:email, Map.get(credentials, "email"))
@@ -19,11 +20,12 @@ defmodule OrdoWeb.Authentication.SessionController do
   end
 
   def create(conn, %{"login" => credentials}) do
-    with {:ok, actor} <- Authentication.sign_in(credentials) do
-      conn
-      |> put_flash(:info, "Welcome back!")
-      |> ActorAuth.log_in_actor(actor, credentials)
-    else
+    case Authentication.sign_in(credentials) do
+      {:ok, actor} ->
+        conn
+        |> put_flash(:info, "Welcome back!")
+        |> ActorAuth.log_in_actor(actor, credentials)
+
       {:error, :invalid_credentials} ->
         conn
         |> put_flash(:email, Map.get(credentials, "email"))

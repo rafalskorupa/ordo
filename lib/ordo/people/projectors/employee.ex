@@ -6,8 +6,9 @@ defmodule Ordo.People.Projectors.Employee do
     consistency: :strong
 
   alias Ordo.People.Projections.Employee
-  alias Ordo.People.Events.EmployeeCreated
+
   alias Ordo.People.Events.EmployeeAccountLinked
+  alias Ordo.People.Events.EmployeeCreated
   alias Ordo.People.Events.EmployeeInfoChanged
 
   project(

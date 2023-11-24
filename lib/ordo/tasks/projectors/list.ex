@@ -8,9 +8,10 @@ defmodule Ordo.Tasks.Projectors.List do
   import Ecto.Query
 
   alias Ordo.Tasks.Projections.List
+
   alias Ordo.Tasks.Events.ListCreated
-  alias Ordo.Tasks.Events.ListNameChanged
   alias Ordo.Tasks.Events.ListDeleted
+  alias Ordo.Tasks.Events.ListNameChanged
 
   project(
     %ListCreated{corpo_id: corpo_id, list_id: list_id},
