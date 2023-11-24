@@ -63,7 +63,7 @@
           </:action>
         </.employee_avatar>
       <% end %>
-      <%= if Enum.count(task.assigned_employees) < 5 do %>
+      <%= if Enum.count(task.assigned_employees) < Ordo.Tasks.Rules.maximimum_task_assignees() do %>
         <div
           data-dropdown-toggle={"add-assignee-dropdown-#{task.id}"}
           data-dropdown-placement="bottom"

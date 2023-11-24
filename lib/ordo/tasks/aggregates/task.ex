@@ -47,7 +47,7 @@ defmodule Ordo.Tasks.Aggregates.Task do
       MapSet.member?(assignees, employee_id) ->
         {:error, :already_assigned_to_task}
 
-      Enum.count(assignees) + 1 > @assignees_limit ->
+      Enum.count(assignees) + 1 > Ordo.Tasks.Rules.maximimum_task_assignees() ->
         {:error, :too_many_assignees}
 
       true ->
