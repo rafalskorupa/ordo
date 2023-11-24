@@ -11,6 +11,9 @@ defmodule Ordo.Tasks.Projections.Task do
     field :corpo_id, :binary_id
     field :list_id, :binary_id
 
+    has_many(:assignees, Ordo.Tasks.Projections.Assignee)
+    has_many(:assigned_employees, through: [:assignees, :employee])
+
     timestamps(type: :utc_datetime)
   end
 

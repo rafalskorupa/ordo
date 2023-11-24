@@ -16,13 +16,16 @@ defmodule Ordo.Tasks do
     Tasks.Projections.Task
     |> actor_scope(actor)
     |> Repo.get!(id)
+    |> Repo.preload(:assigned_employees)
   end
 
   def list_tasks(actor, list_id) do
     Tasks.Projections.Task
     |> actor_scope(actor)
-    |> where(list_id: ^list_id)
+    |> where(list_id: ^list_id, archived: false)
+    |> order_by(asc: :completed)
     |> Repo.all()
+    |> Repo.preload(:assigned_employees)
   end
 
   def create_task(actor, attrs) do
@@ -41,6 +44,20 @@ defmodule Ordo.Tasks do
 
   def archive_task(actor, %Task{} = task) do
     with {:ok, command} <- Tasks.Commands.ArchiveTask.build(actor, task),
+         :ok <- Ordo.App.dispatch(command, consistency: :strong) do
+      {:ok, get_task!(actor, command.task_id)}
+    end
+  end
+
+  def assign_to_task(actor, task, attrs) do
+    with {:ok, command} <- Tasks.Commands.AssignToTask.build(actor, task, attrs),
+         :ok <- Ordo.App.dispatch(command, consistency: :strong) do
+      {:ok, get_task!(actor, command.task_id)}
+    end
+  end
+
+  def deassign_from_task(actor, task, attrs) do
+    with {:ok, command} <- Tasks.Commands.DeassignFromTask.build(actor, task, attrs),
          :ok <- Ordo.App.dispatch(command, consistency: :strong) do
       {:ok, get_task!(actor, command.task_id)}
     end

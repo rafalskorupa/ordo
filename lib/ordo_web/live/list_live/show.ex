@@ -27,7 +27,7 @@ defmodule OrdoWeb.ListLive.Show do
   def handle_event("add_task", %{"create_task" => params}, socket) do
     case Tasks.create_task(socket.assigns.actor, params) do
       {:ok, task} ->
-        {:noreply, stream_insert(socket, :tasks, task)}
+        {:noreply, stream_insert(socket, :tasks, task, at: 0)}
 
       {:error, changeset} ->
         {:noreply, assign_add_task_form(socket, changeset)}
@@ -36,16 +36,52 @@ defmodule OrdoWeb.ListLive.Show do
 
   def handle_event("archive", %{"task_id" => task_id}, socket) do
     task = Tasks.get_task!(socket.assigns.actor, task_id)
-    {:ok, task} = Tasks.archive_task(socket.assigns.actor, task)
 
-    {:noreply, stream_insert(socket, :tasks, task)}
+    case Tasks.archive_task(socket.assigns.actor, task) do
+      {:ok, task} ->
+        {:noreply, stream_delete(socket, :tasks, task)}
+
+      {:error, :task_already_archived} ->
+        {:noreply, put_flash(socket, :error, "Task is already archived")}
+    end
   end
 
   def handle_event("complete", %{"task_id" => task_id}, socket) do
     task = Tasks.get_task!(socket.assigns.actor, task_id)
-    {:ok, task} = Tasks.complete_task(socket.assigns.actor, task)
 
-    {:noreply, stream_insert(socket, :tasks, task)}
+    case Tasks.complete_task(socket.assigns.actor, task) do
+      {:ok, task} ->
+        {:noreply, stream_insert(socket, :tasks, task, at: 500)}
+    end
+  end
+
+  def handle_event("assign_yourself", %{"task_id" => task_id}, socket) do
+    task = Tasks.get_task!(socket.assigns.actor, task_id)
+
+    case Tasks.assign_to_task(socket.assigns.actor, task, %{
+           employee_id: socket.assigns.actor.employee.id
+         }) do
+      {:ok, task} ->
+        {:noreply, stream_insert(socket, :tasks, task)}
+
+      {:error, :already_assigned_to_task} ->
+        {:noreply, put_flash(socket, :error, "You are already assigned to this task")}
+    end
+  end
+
+  def handle_event("deassign", %{"task_id" => task_id, "employee_id" => employee_id}, socket) do
+    task = Tasks.get_task!(socket.assigns.actor, task_id)
+
+    case Tasks.deassign_from_task(socket.assigns.actor, task, %{
+           employee_id: employee_id
+         }) do
+      {:ok, task} ->
+        {:noreply, stream_insert(socket, :tasks, task)}
+
+      {:error, :not_assigned_to_task} ->
+        socket = stream_insert(socket, :tasks, task)
+        {:noreply, put_flash(socket, :error, "Employee is already deassigned from task")}
+    end
   end
 
   defp assign_add_task_form(socket, %Ecto.Changeset{} = changeset) do

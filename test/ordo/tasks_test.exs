@@ -52,6 +52,58 @@ defmodule Ordo.TasksTest do
     end
   end
 
+  describe "assign_to_task/3" do
+    setup [:create_corpo_account]
+
+    test "it assign employee to task", %{actor: actor} do
+      task = task_fixture(actor)
+      employee_id = actor.employee.id
+
+      assert {:ok, %{} = task} = Tasks.assign_to_task(actor, task, %{employee_id: employee_id})
+      assert [%{id: ^employee_id}] = task.assigned_employees
+    end
+
+    test "it returns too many assignees error", %{actor: actor} do
+      task = task_fixture(actor)
+      task_assignee_fixture(%{actor: actor, task: task})
+      task_assignee_fixture(%{actor: actor, task: task})
+      task_assignee_fixture(%{actor: actor, task: task})
+      task_assignee_fixture(%{actor: actor, task: task})
+      task_assignee_fixture(%{actor: actor, task: task})
+
+      assert {:error, :too_many_assignees} =
+               Tasks.assign_to_task(actor, task, %{employee_id: actor.employee.id})
+    end
+
+    test "it returns already assigned error", %{actor: actor} do
+      task = task_fixture(actor)
+      %{employee: %{id: employee_id}} = task_assignee_fixture(%{actor: actor, task: task})
+
+      assert {:error, :already_assigned_to_task} =
+               Tasks.assign_to_task(actor, task, %{employee_id: employee_id})
+    end
+  end
+
+  describe "deassign_from_task/3" do
+    setup [:create_corpo_account, :create_task]
+
+    test "it deassign employee from task", %{actor: actor, task: task} do
+      %{employee: %{id: employee_id}} = task_assignee_fixture(%{actor: actor, task: task})
+
+      assert {:ok, %{} = task} =
+               Tasks.deassign_from_task(actor, task, %{employee_id: employee_id})
+
+      assert task.assignees == []
+    end
+
+    test "it returns not assigned error", %{actor: actor, task: task} do
+      employee_id = Ecto.UUID.generate()
+
+      assert {:error, :not_assigned_to_task} =
+               Tasks.deassign_from_task(actor, task, %{employee_id: employee_id})
+    end
+  end
+
   describe "list_exists!/2" do
     setup [:create_corpo_account]
 
