@@ -31,32 +31,51 @@ defmodule Ordo.TasksTest do
   end
 
   describe "complete_task/2" do
-    setup [:create_corpo_account]
+    setup [:create_corpo_account, :create_task]
 
-    test "it completes existing task", %{actor: actor} do
-      task = task_fixture(actor)
-
+    test "it completes existing task", %{actor: actor, task: task} do
       assert {:ok, %{} = task} = Tasks.complete_task(actor, task)
       assert task.completed
+    end
+
+    test "it return task_not_found error if task is archived", %{actor: actor, task: task} = assigns do
+      archive_task(assigns)
+
+      assert {:error, :task_not_found} = Tasks.complete_task(actor, task)
+    end
+
+    test "it return task_not_found error if actor doesn't have access to it", %{task: task} do
+      %{actor: actor} = create_corpo_account()
+
+      assert {:error, :task_not_found} = Tasks.complete_task(actor, task)
     end
   end
 
   describe "archive_task/2" do
-    setup [:create_corpo_account]
+    setup [:create_corpo_account, :create_task]
 
-    test "it archives existing task", %{actor: actor} do
-      task = task_fixture(actor)
-
+    test "it archives existing task", %{actor: actor, task: task} do
       assert {:ok, %{} = task} = Tasks.archive_task(actor, task)
       assert task.archived
+    end
+
+    test "it return :task__not_found error if task is already archived", %{actor: actor, task: task} = assigns do
+      archive_task(assigns)
+
+      assert {:error, :task_not_found} = Tasks.archive_task(actor, task)
+    end
+
+    test "it return task_not_found error if actor doesn't have access to it", %{task: task} do
+      %{actor: actor} = create_corpo_account()
+
+      assert {:error, :task_not_found} = Tasks.archive_task(actor, task)
     end
   end
 
   describe "assign_to_task/3" do
-    setup [:create_corpo_account]
+    setup [:create_corpo_account, :create_task]
 
-    test "it assign employee to task", %{actor: actor} do
-      task = task_fixture(actor)
+    test "it assign employee to task", %{actor: actor, task: task} do
       employee_id = actor.employee.id
 
       assert {:ok, %{} = task} = Tasks.assign_to_task(actor, task, %{employee_id: employee_id})
@@ -65,8 +84,6 @@ defmodule Ordo.TasksTest do
 
     test "it returns too many assignees error", %{actor: actor} do
       task = task_fixture(actor)
-      task_assignee_fixture(%{actor: actor, task: task})
-      task_assignee_fixture(%{actor: actor, task: task})
       task_assignee_fixture(%{actor: actor, task: task})
       task_assignee_fixture(%{actor: actor, task: task})
       task_assignee_fixture(%{actor: actor, task: task})
@@ -104,17 +121,17 @@ defmodule Ordo.TasksTest do
     end
   end
 
-  describe "list_exists!/2" do
+  describe "verify_list!/2" do
     setup [:create_corpo_account]
 
     test "returns :ok if list exists", %{actor: actor} do
       list = list_fixture(actor)
 
-      assert :ok == Tasks.list_exists!(actor, %{list_id: list.id})
+      assert :ok == Tasks.verify_list!(actor, %{list_id: list.id})
     end
 
-    test "returns {:error, :not_found} if list doesn't exists", %{actor: actor} do
-      assert {:error, :not_found} == Tasks.list_exists!(actor, %{list_id: Ecto.UUID.generate()})
+    test "returns list_not_found error if list doesn't exists", %{actor: actor} do
+      assert {:error, :list_not_found} == Tasks.verify_list!(actor, %{list_id: Ecto.UUID.generate()})
     end
   end
 
@@ -125,7 +142,6 @@ defmodule Ordo.TasksTest do
 
     alias Ordo.Tasks.Projections.List
 
-    import Ordo.TasksFixtures
 
     @invalid_attrs %{name: nil}
 

@@ -19,6 +19,12 @@ defmodule Ordo.TasksFixtures do
     %{task: task_fixture(actor)}
   end
 
+  def archive_task(%{actor: actor, task: task}) do
+    {:ok, task} = Ordo.Tasks.archive_task(actor, task)
+
+    %{task: task}
+  end
+
   def task_fixture(actor, attrs \\ %{}) do
     list = Map.get_lazy(attrs, :list, fn -> list_fixture(actor) end)
     attrs = Enum.into(Map.drop(attrs, [:list]), %{name: "Task Name", list_id: list.id})

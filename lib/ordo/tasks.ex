@@ -100,7 +100,7 @@ defmodule Ordo.Tasks do
     |> Repo.get!(id)
   end
 
-  def list_exists!(actor, %{list_id: list_id}) do
+  def verify_list!(actor, %{list_id: list_id}) do
     %Tasks.Commands.VerifyList{list_id: list_id, actor: actor}
     |> Ordo.App.dispatch()
   end

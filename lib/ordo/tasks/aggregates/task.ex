@@ -19,7 +19,7 @@ defmodule Ordo.Tasks.Aggregates.Task do
   def create_task(%Task{}, %CreateTask{} = command) do
     %{task_id: task_id, list_id: list_id, name: name, actor: actor} = command
 
-    :ok = Ordo.Tasks.list_exists!(command.actor, %{list_id: list_id})
+    :ok = Ordo.Tasks.verify_list!(command.actor, %{list_id: list_id})
 
     %TaskCreated{
       task_id: task_id,
@@ -37,9 +37,13 @@ defmodule Ordo.Tasks.Aggregates.Task do
   """
   def verify_available(%Task{archived: true}, _actor), do: {:error, :task_not_found}
 
-  def verify_available(%Task{corpo_id: corpo_id, archived: false}, %{corpo: %{id: corpo_id}})
-      when is_binary(corpo_id),
-      do: :ok
+  def verify_available(%Task{archived: false} = task, %{corpo: %{id: corpo_id}}) do
+    if task.corpo_id == corpo_id do
+      :ok
+    else
+      {:error, :task_not_found}
+    end
+  end
 
   def add_assignee(%Task{assignees: assignees} = task, employee_id, actor) do
     cond do
@@ -82,8 +86,6 @@ defmodule Ordo.Tasks.Aggregates.Task do
     }
   end
 
-  def archive_task(%Task{archived: true}, _), do: {:error, :task_already_archived}
-
   def archive_task(%Task{archived: false} = task, actor) do
     %TaskArchived{
       task_id: task.task_id,
@@ -107,7 +109,10 @@ defmodule Ordo.Tasks.Aggregates.Task do
   def execute(%Task{} = task, %ArchiveTask{
         actor: actor
       }) do
-    archive_task(task, actor)
+    task
+    |> Multi.new()
+    |> Multi.execute(&verify_available(&1, actor))
+    |> Multi.execute(&archive_task(&1, actor))
   end
 
   def execute(%Task{} = task, %AssignToTask{} = command) do

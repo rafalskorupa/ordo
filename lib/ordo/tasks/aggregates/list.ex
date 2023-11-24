@@ -14,10 +14,10 @@ defmodule Ordo.Tasks.Aggregates.List do
   alias Ordo.Tasks.Events.ListNameChanged
   alias Ordo.Tasks.Events.ListDeleted
 
-  def list_exists!(%List{corpo_id: corpo_id, deleted: false}, %Ordo.Actor{corpo: %{id: corpo_id}}),
+  def verify_list!(%List{corpo_id: corpo_id, deleted: false}, %Ordo.Actor{corpo: %{id: corpo_id}}),
     do: :ok
 
-  def list_exists!(_, _), do: {:error, :not_found}
+  def verify_list!(_, _), do: {:error, :list_not_found}
 
   def create_list(%List{list_id: nil}, list_id, %Ordo.Actor{} = actor) do
     %ListCreated{
@@ -47,7 +47,7 @@ defmodule Ordo.Tasks.Aggregates.List do
   end
 
   def execute(%List{} = list, %VerifyList{actor: actor}) do
-    list_exists!(list, actor)
+    verify_list!(list, actor)
   end
 
   def execute(%List{} = aggregate, %CreateList{} = command) do
@@ -64,7 +64,7 @@ defmodule Ordo.Tasks.Aggregates.List do
 
     aggregate
     |> Multi.new()
-    |> Multi.execute(fn list -> list_exists!(list, command.actor) end)
+    |> Multi.execute(fn list -> verify_list!(list, command.actor) end)
     |> Multi.execute(fn list -> update_name(list, command) end)
   end
 
@@ -73,7 +73,7 @@ defmodule Ordo.Tasks.Aggregates.List do
 
     aggregate
     |> Multi.new()
-    |> Multi.execute(fn list -> list_exists!(list, command.actor) end)
+    |> Multi.execute(fn list -> verify_list!(list, command.actor) end)
     |> Multi.execute(fn list -> delete_list(list, command.actor) end)
   end
 
