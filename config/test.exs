@@ -9,18 +9,18 @@ config :bcrypt_elixir, :log_rounds, 1
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 config :ordo, Ordo.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  database: "ordo_test",
+  username: System.get_env("POSTGRES_USER") || "postgres",
+  password: System.get_env("POSTGRES_PASSWORD") || "postgres",
+  database: System.get_env("POSTGRES_DB") || "ordo_test",
+  hostname: System.get_env("POSTGRES_HOST") || "localhost",
   pool_size: 10
 
 config :ordo, Ordo.EventStore,
   serializer: Commanded.Serialization.JsonSerializer,
-  username: "postgres",
-  password: "postgres",
-  database: "ordo_eventstore_test",
-  hostname: "localhost",
+  username: System.get_env("POSTGRES_USER") || "postgres",
+  password: System.get_env("POSTGRES_PASSWORD") || "postgres",
+  database: System.get_env("POSTGRES_DB") || "ordo_eventstore_test",
+  hostname: System.get_env("POSTGRES_HOST") || "localhost",
   pool_size: 1
 
 # We don't run a server during test. If one is required,
