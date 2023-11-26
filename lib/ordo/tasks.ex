@@ -35,6 +35,12 @@ defmodule Ordo.Tasks do
     end
   end
 
+  def task_assignees(task_id) do
+    Tasks.Projections.Assignee
+    |> where(task_id: ^task_id)
+    |> Repo.all()
+  end
+
   def complete_task(actor, %Task{} = task) do
     with {:ok, command} <- Tasks.Commands.CompleteTask.build(actor, task),
          :ok <- Ordo.App.dispatch(command, consistency: :strong) do

@@ -23,17 +23,18 @@ defmodule OrdoWeb.ViewHelpers do
   def employee_status(%{invitations: [%{} | _]}), do: "Invited"
   def employee_status(_), do: nil
 
+  def task_name!(nil), do: "Task"
+  def task_name!(%{name: name}), do: name
+
   def employee_initials(employee) do
     [
-      String.at(employee.first_name, 0),
-      String.at(employee.last_name, 0)
+      employee.first_name || "?",
+      employee.last_name || "?"
     ]
-    |> Enum.join("")
-    |> case do
-      "" -> "??"
-      initials -> initials
-    end
+    |> Enum.map_join("", &String.at(&1, 0))
   end
+
+  def employee_initalis(nil), do: "??"
 
   def actor_already_assigned?(%{employee: %{id: id}}, employees) do
     Enum.find(employees, &(&1.id == id))

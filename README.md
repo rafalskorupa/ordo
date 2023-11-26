@@ -50,6 +50,14 @@ Module reponsible for managing Todo Lists, Tasks and Boards
 
 #TODO(rsko): When adding assignee to a task new "Add assignee" button doesn't display dropdown - rewrite to separate component
 
+### Ordo.Notifications
+
+Context responsible for sending notifications
+
+Currently, Employee will receive in-app notification if:
+* Someone else assigned task to him
+* Someone else unassigned task from him
+
 ### Ordo.Nasa
 
 Calculates fuel required for a Space Trip.
@@ -63,6 +71,11 @@ Solves a problem with recursively calculating values based on formulas.
 * Web layer is not tested
 * Fixtures have to be refactored, still figuring out the way to do it with gracefully handling need for an Actor in every command
 * Multiple invitations can be created for one email address - it might be a feature, but I see it as a bug
+
+
+## Business Logic questions
+
+*  Notifications are sent for employees without account - whenever account is linked all notifications are assigned to user - should it behave that way? I see a value in that, but it's not a solution that was picked, rather that was just applied
 
 ## Setup
 

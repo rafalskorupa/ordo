@@ -4,16 +4,16 @@ defmodule Ordo.Tasks.Aggregates.Task do
   alias Commanded.Aggregate.Multi
 
   alias Ordo.Tasks.Aggregates.Task
+
   alias Ordo.Tasks.Commands.ArchiveTask
   alias Ordo.Tasks.Commands.AssignToTask
   alias Ordo.Tasks.Commands.CompleteTask
   alias Ordo.Tasks.Commands.CreateTask
   alias Ordo.Tasks.Commands.DeassignFromTask
 
-  alias Ordo.Tasks.Events.TaskArchived
-
   alias Ordo.Tasks.Events.EmployeeAssignedToTask
   alias Ordo.Tasks.Events.EmployeeDeassignedFromTask
+  alias Ordo.Tasks.Events.TaskArchived
   alias Ordo.Tasks.Events.TaskCompleted
   alias Ordo.Tasks.Events.TaskCreated
 
