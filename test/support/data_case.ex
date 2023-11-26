@@ -20,6 +20,8 @@ defmodule Ordo.DataCase do
     quote do
       alias Ordo.Repo
 
+      use Oban.Testing, repo: Ordo.Repo
+
       import Ecto
       import Ecto.Changeset
       import Ecto.Query

@@ -75,6 +75,10 @@ defmodule OrdoWeb.ActorAuth do
     end
   end
 
+  def on_mount(:ensure_corpo_actor, :not_mounted_at_router, session, socket) do
+    on_mount(:ensure_corpo_actor, session, session, socket)
+  end
+
   def on_mount(:ensure_corpo_actor, %{"corpo_id" => corpo_id}, session, socket) do
     socket = mount_current_actor(socket, session)
 
@@ -107,7 +111,7 @@ defmodule OrdoWeb.ActorAuth do
     end
   end
 
-  defp mount_current_actor(socket, session) do
+  def mount_current_actor(socket, session) do
     Phoenix.Component.assign_new(socket, :actor, fn ->
       with token when is_binary(token) <- session["actor_token"],
            session_id = decode_token(token),

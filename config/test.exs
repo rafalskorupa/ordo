@@ -23,6 +23,8 @@ config :ordo, Ordo.EventStore,
   hostname: System.get_env("POSTGRES_HOST") || "localhost",
   pool_size: 1
 
+config :ordo, Oban, testing: :manual
+
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :ordo, OrdoWeb.Endpoint,

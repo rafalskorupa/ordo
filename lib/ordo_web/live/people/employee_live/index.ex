@@ -49,7 +49,7 @@ defmodule OrdoWeb.People.EmployeeLive.Index do
     {:noreply, stream_insert(socket, :employees, employee)}
   end
 
-  def handle_info({OrdoWeb.People.EmployeeLive.InvitationComponent, {:invited, employee}}, socket) do
+  def handle_info({_, {:invited, employee}}, socket) do
     {:noreply, stream_insert(socket, :employees, employee)}
   end
 

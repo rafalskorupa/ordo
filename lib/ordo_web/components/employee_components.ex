@@ -47,7 +47,7 @@ defmodule OrdoWeb.EmployeeComponents do
     ~H"""
     <div class="relative mr-1">
       <.link
-        navigate={~p"/app/#{@employee.corpo_id}/people/#{@employee.id}"}
+        navigate={employee_path(@employee)}
         data-tooltip-target={"employee-avatar-#{@id}-#{@employee.id}"}
       >
         <.employee_image employee={@employee} />
@@ -66,6 +66,19 @@ defmodule OrdoWeb.EmployeeComponents do
         <div class="tooltip-arrow" data-popper-arrow></div>
       </div>
     <% end %>
+    """
+  end
+
+  attr :employee, :any, default: nil
+
+  def employee_link(assigns) do
+    ~H"""
+    <.link
+      class={[@employee && "text-purple-700 dark:text-purple-500"]}
+      navigate={employee_path(@employee)}
+    >
+      <%= employee_name!(@employee) %>
+    </.link>
     """
   end
 
@@ -110,5 +123,11 @@ defmodule OrdoWeb.EmployeeComponents do
       </div>
     <% end %>
     """
+  end
+
+  def employee_path(nil), do: nil
+
+  def employee_path(employee) do
+    ~p"/app/#{employee.corpo_id}/people/#{employee.id}"
   end
 end

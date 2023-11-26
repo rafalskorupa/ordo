@@ -18,6 +18,9 @@ defmodule Ordo.Application do
       # Start to serve requests, typically the last entry
       OrdoWeb.Endpoint,
       Ordo.App,
+      {Oban, Application.fetch_env!(:ordo, Oban)},
+
+      # Supervise separately
       Ordo.Authentication.Projectors.Account,
       Ordo.Authentication.Projectors.Session,
       Ordo.Corpos.Projectors.Corpo,
@@ -26,7 +29,9 @@ defmodule Ordo.Application do
       Ordo.Invitations.Projectors.Invitation,
       Ordo.Tasks.Projectors.List,
       Ordo.Tasks.Projectors.Task,
-      Ordo.Tasks.Projectors.Assignee
+      Ordo.Tasks.Projectors.Assignee,
+      Ordo.Notifications.Handlers.Task,
+      Ordo.Notifications.Projectors.Notification
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

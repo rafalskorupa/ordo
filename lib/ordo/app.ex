@@ -11,4 +11,5 @@ defmodule Ordo.App do
   router(Ordo.Invitations.Router)
   router(Ordo.People.Router)
   router(Ordo.Tasks.Router)
+  router(Ordo.Notifications.Router)
 end

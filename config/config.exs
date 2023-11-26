@@ -23,6 +23,13 @@ config :ordo, OrdoWeb.Endpoint,
   pubsub_server: Ordo.PubSub,
   live_view: [signing_salt: "EQKvTSCe"]
 
+config :ordo, Oban,
+  repo: Ordo.Repo,
+  plugins: [Oban.Plugins.Pruner],
+  queues: [default: 10]
+
+config :ordo, Ordo.Gettext, default_locale: "en", locales: ~w(en pl)
+
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails
