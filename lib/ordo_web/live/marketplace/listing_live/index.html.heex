@@ -1,0 +1,19 @@
+<.header>
+  Listing Listings
+</.header>
+
+<.table
+  id="listings"
+  rows={@streams.listings}
+  row_click={fn {_id, listing} -> JS.navigate(~p"/marketplace/listings/#{listing}") end}
+>
+  <:col :let={{_id, listing}} label="Name"><%= listing.name %></:col>
+  <:col :let={{_id, listing}} label="Total"><%= listing.total %></:col>
+  <:col :let={{_id, listing}} label="Reserved"><%= listing.reserved %></:col>
+  <:col :let={{_id, listing}} label="Public"><%= listing.public %></:col>
+  <:action :let={{_id, listing}}>
+    <div class="sr-only">
+      <.link navigate={~p"/marketplace/listings/#{listing}"}>Show</.link>
+    </div>
+  </:action>
+</.table>

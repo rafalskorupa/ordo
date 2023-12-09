@@ -1,4 +1,4 @@
-defmodule OrdoWeb.ListLive.FormComponent do
+defmodule OrdoWeb.App.ListLive.FormComponent do
   use OrdoWeb, :live_component
 
   alias Ordo.Tasks

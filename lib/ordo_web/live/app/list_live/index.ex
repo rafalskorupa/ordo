@@ -1,4 +1,4 @@
-defmodule OrdoWeb.ListLive.Index do
+defmodule OrdoWeb.App.ListLive.Index do
   use OrdoWeb, :live_view
 
   alias Ordo.Tasks
@@ -33,7 +33,7 @@ defmodule OrdoWeb.ListLive.Index do
   end
 
   @impl true
-  def handle_info({OrdoWeb.ListLive.FormComponent, {:saved, list}}, socket) do
+  def handle_info({OrdoWeb.App.ListLive.FormComponent, {:saved, list}}, socket) do
     {:noreply, stream_insert(socket, :task_lists, list)}
   end
 
