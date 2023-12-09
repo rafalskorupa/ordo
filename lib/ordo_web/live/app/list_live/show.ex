@@ -1,4 +1,4 @@
-defmodule OrdoWeb.ListLive.Show do
+defmodule OrdoWeb.App.ListLive.Show do
   use OrdoWeb, :live_view
 
   alias Ordo.People

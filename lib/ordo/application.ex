@@ -31,7 +31,8 @@ defmodule Ordo.Application do
       Ordo.Tasks.Projectors.Task,
       Ordo.Tasks.Projectors.Assignee,
       Ordo.Notifications.Handlers.Task,
-      Ordo.Notifications.Projectors.Notification
+      Ordo.Notifications.Projectors.Notification,
+      Ordo.Listings.Projectors.List
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

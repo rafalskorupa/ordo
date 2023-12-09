@@ -8,8 +8,9 @@ defmodule Ordo.App do
 
   router(Ordo.Authentication.Router)
   router(Ordo.Corpos.Router)
+  router(Ordo.Inventory.Router)
   router(Ordo.Invitations.Router)
+  router(Ordo.Notifications.Router)
   router(Ordo.People.Router)
   router(Ordo.Tasks.Router)
-  router(Ordo.Notifications.Router)
 end

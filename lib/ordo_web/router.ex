@@ -36,7 +36,7 @@ defmodule OrdoWeb.Router do
         live "/:id/show/edit", EmployeeLive.Show, :edit
       end
 
-      scope "/task_lists", ListLive do
+      scope "/task_lists", App.ListLive do
         live "/", Index, :index
         live "/new", Index, :new
         live "/:id/edit", Index, :edit
@@ -44,11 +44,26 @@ defmodule OrdoWeb.Router do
         live "/:id", Show, :show
         live "/:id/show/edit", Show, :edit
       end
+
+      scope "/inventory", App.Inventory do
+        scope "/listings", ListingsLive do
+          live "/", Index, :index
+          live "/new", Index, :new
+          live "/:id/edit", Index, :edit
+        end
+      end
     end
   end
 
   scope "/", OrdoWeb do
     pipe_through [:browser]
+
+    scope "/marketplace", Marketplace do
+      scope "/listings", ListingLive do
+        live "/", Index, :index
+        live "/:id", Show, :show
+      end
+    end
 
     get "/", PageController, :home
 

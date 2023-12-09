@@ -4,6 +4,7 @@ Ordo App is sandbox app built on top Commanded ecosystem.
 
 ## Context explanation
 
+
 ### Ordo.Actor
 
 One module that defines "Actor" through the Application. All queries and commands should use this as a first argument.
@@ -65,6 +66,12 @@ Calculates fuel required for a Space Trip.
 Solves a problem with recursively calculating values based on formulas.
 
 #TODO(rsko): Describe formulas and problem
+
+### Shop-related: Ordo.Marketplace, Ordo.Inventory, Ordo.Listings
+
+Ordo.Marketplace is context for marketplace clients (not app users)
+Ordo.Inventory is context for managing inventory (from perspective of corpo app user)
+Ordo.Listings is a "private" context that manages inventory
 
 ## Known Issues 
 

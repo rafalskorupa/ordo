@@ -33,7 +33,8 @@ defmodule Ordo.Storage do
       corpos,
       invitations,
       task_lists,
-      task_tasks
+      task_tasks,
+      marketplace_listings
     RESTART IDENTITY
     CASCADE;
     """

@@ -157,7 +157,7 @@
   on_cancel={JS.patch(~p"/app/#{@corpo.id}/task_lists/#{@list}")}
 >
   <.live_component
-    module={OrdoWeb.ListLive.FormComponent}
+    module={OrdoWeb.App.ListLive.FormComponent}
     id={@list.id}
     title={@page_title}
     action={@live_action}

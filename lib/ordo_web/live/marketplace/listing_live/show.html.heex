@@ -1,0 +1,13 @@
+<.header>
+  Listing <%= @listing.id %>
+  <:subtitle>This is a listing record from your database.</:subtitle>
+</.header>
+
+<.list>
+  <:item title="Name"><%= @listing.name %></:item>
+  <:item title="Total"><%= @listing.total %></:item>
+  <:item title="Reserved"><%= @listing.reserved %></:item>
+  <:item title="Public"><%= @listing.public %></:item>
+</.list>
+
+<.back navigate={~p"/marketplace/listings"}>Back to listings</.back>
